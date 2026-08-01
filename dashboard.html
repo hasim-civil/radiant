@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Dashboard - Radiant Attendance</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="light-mode">
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+    </div>
+
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <img src="images/logo.png" alt="Logo" class="logo-img-small">
+                    <i class="fas fa-clock logo-icon-small"></i>
+                    <span>Radiant</span>
+                </div>
+                <button class="sidebar-toggle" id="sidebarToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-item active" data-section="overview">
+                    <i class="fas fa-home"></i>
+                    <span>Overview</span>
+                </a>
+                <a href="#" class="nav-item" data-section="attendance">
+                    <i class="fas fa-calendar-check"></i>
+                    <span>My Attendance</span>
+                </a>
+                <a href="#" class="nav-item" data-section="profile">
+                    <i class="fas fa-user"></i>
+                    <span>Profile</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <button class="logout-btn" id="logoutBtn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </button>
+                <div class="sidebar-credit">
+                    <small>Created by Hasim</small>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Top Bar -->
+            <header class="top-bar">
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="welcome-text">
+                    <h2>Welcome, <span id="userName">Employee</span>!</h2>
+                    <p id="currentDate"></p>
+                </div>
+                <div class="top-bar-right">
+                    <div class="live-clock" id="liveClock"></div>
+                    <div class="user-avatar" id="userAvatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Overview Section -->
+            <section class="content-section active" id="overviewSection">
+                <!-- Quick Stats -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon blue">
+                            <i class="fas fa-calendar-day"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="totalDays">0</h3>
+                            <p>Working Days</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon green">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="totalHours">0h</h3>
+                            <p>Total Hours</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon purple">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="presentDays">0</h3>
+                            <p>Present Days</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon orange">
+                            <i class="fas fa-hourglass-half"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="avgHours">0h</h3>
+                            <p>Avg Hours/Day</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon red">
+                            <i class="fas fa-arrow-down"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="lessHours">0h</h3>
+                            <p>Less Hours</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon teal">
+                            <i class="fas fa-arrow-up"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="overtimeHours">0h</h3>
+                            <p>Overtime</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Check In/Out Section -->
+                <div class="attendance-action-card">
+                    <div class="action-header">
+                        <h3><i class="fas fa-fingerprint"></i> Today's Attendance</h3>
+                        <span class="today-date" id="todayDate"></span>
+                    </div>
+                    <div class="action-body">
+                        <div class="attendance-status" id="attendanceStatus">
+                            <div class="status-item">
+                                <span class="status-label">Check In</span>
+                                <span class="status-value" id="checkInTime">--:--</span>
+                            </div>
+                            <div class="status-item">
+                                <span class="status-label">Check Out</span>
+                                <span class="status-value" id="checkOutTime">--:--</span>
+                            </div>
+                            <div class="status-item">
+                                <span class="status-label">Working Hours</span>
+                                <span class="status-value" id="workingHours">--:--</span>
+                            </div>
+                            <div class="status-item">
+                                <span class="status-label">Status</span>
+                                <span class="status-badge" id="todayStatus">Not Checked In</span>
+                            </div>
+                        </div>
+                        <div class="action-buttons">
+                            <button class="btn btn-success btn-lg" id="checkInBtn">
+                                <i class="fas fa-sign-in-alt"></i> Check In
+                            </button>
+                            <button class="btn btn-danger btn-lg" id="checkOutBtn" disabled>
+                                <i class="fas fa-sign-out-alt"></i> Check Out
+                            </button>
+                            <button class="btn btn-outline btn-lg" id="editTimeBtn" style="display:none;">
+                                <i class="fas fa-edit"></i> Edit Time
+                            </button>
+                            <button class="btn btn-secondary btn-lg" id="addPastAttendanceBtn">
+                                <i class="fas fa-calendar-plus"></i> Add Past Attendance
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Attendance -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-history"></i> Recent Attendance</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Check In</th>
+                                        <th>Check Out</th>
+                                        <th>Hours</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="recentAttendanceTable">
+                                    <tr>
+                                        <td colspan="5" class="text-center">Loading...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Attendance Section -->
+            <section class="content-section" id="attendanceSection">
+                <div class="section-header">
+                    <h2><i class="fas fa-calendar-check"></i> My Attendance History</h2>
+                    <div class="filter-group">
+                        <select id="monthFilter" class="form-select">
+                            <option value="0">January</option>
+                            <option value="1">February</option>
+                            <option value="2">March</option>
+                            <option value="3">April</option>
+                            <option value="4">May</option>
+                            <option value="5">June</option>
+                            <option value="6">July</option>
+                            <option value="7">August</option>
+                            <option value="8">September</option>
+                            <option value="9">October</option>
+                            <option value="10">November</option>
+                            <option value="11">December</option>
+                        </select>
+                        <select id="yearFilter" class="form-select">
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Monthly Summary -->
+                <div class="summary-cards">
+                    <div class="summary-card">
+                        <i class="fas fa-calendar-check"></i>
+                        <div class="summary-info">
+                            <span class="summary-value" id="monthlyPresent">0</span>
+                            <span class="summary-label">Present</span>
+                        </div>
+                    </div>
+                    <div class="summary-card">
+                        <i class="fas fa-clock"></i>
+                        <div class="summary-info">
+                            <span class="summary-value" id="monthlyHours">0h</span>
+                            <span class="summary-label">Total Hours</span>
+                        </div>
+                    </div>
+                    <div class="summary-card">
+                        <i class="fas fa-chart-line"></i>
+                        <div class="summary-info">
+                            <span class="summary-value" id="monthlyAvg">0h</span>
+                            <span class="summary-label">Avg/Day</span>
+                        </div>
+                    </div>
+                    <div class="summary-card">
+                        <i class="fas fa-arrow-down" style="color: var(--danger-color);"></i>
+                        <div class="summary-info">
+                            <span class="summary-value text-danger" id="monthlyLessHours">0h</span>
+                            <span class="summary-label">Less Hours</span>
+                        </div>
+                    </div>
+                    <div class="summary-card">
+                        <i class="fas fa-arrow-up" style="color: var(--success-color);"></i>
+                        <div class="summary-info">
+                            <span class="summary-value text-success" id="monthlyOvertime">0h</span>
+                            <span class="summary-label">Overtime</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Attendance Table -->
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Day</th>
+                                        <th>Check In</th>
+                                        <th>Check Out</th>
+                                        <th>Hours</th>
+                                        <th>Less / OT</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="monthlyAttendanceTable">
+                                    <tr>
+                                        <td colspan="7" class="text-center">Loading...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Profile Section -->
+            <section class="content-section" id="profileSection">
+                <div class="section-header">
+                    <h2><i class="fas fa-user"></i> My Profile</h2>
+                </div>
+
+                <div class="profile-card">
+                    <div class="profile-avatar">
+                        <i class="fas fa-user-circle"></i>
+                    </div>
+                    <div class="profile-info">
+                        <div class="profile-field">
+                            <label>Full Name</label>
+                            <p id="profileName">Loading...</p>
+                        </div>
+                        <div class="profile-field">
+                            <label>Email Address</label>
+                            <p id="profileEmail">Loading...</p>
+                        </div>
+                        <div class="profile-field">
+                            <label>Role</label>
+                            <p id="profileRole">Loading...</p>
+                        </div>
+                        <div class="profile-field">
+                            <label>Member Since</label>
+                            <p id="profileJoined">Loading...</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Dashboard Footer -->
+            <footer class="dashboard-footer">
+                <p>Created by Hasim</p>
+            </footer>
+        </main>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Add Past Attendance Modal -->
+    <div class="modal" id="addPastAttendanceModal">
+        <div class="modal-content modal-sm">
+            <div class="modal-header">
+                <h3><i class="fas fa-calendar-plus"></i> Add Past Attendance</h3>
+                <button class="modal-close" id="closeAddPastModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label><i class="fas fa-calendar"></i> Select Date</label>
+                    <input type="date" id="pastAttendanceDate" class="form-input">
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-sign-in-alt"></i> Check In Time</label>
+                    <div class="time-picker-group">
+                        <input type="number" id="pastCheckInHour" class="form-input time-part" min="1" max="12" placeholder="HH">
+                        <span class="time-sep">:</span>
+                        <input type="number" id="pastCheckInMin" class="form-input time-part" min="0" max="59" placeholder="MM">
+                        <div class="ampm-toggle">
+                            <button type="button" class="ampm-btn active" data-target="pastCheckIn" data-val="AM">AM</button>
+                            <button type="button" class="ampm-btn" data-target="pastCheckIn" data-val="PM">PM</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-sign-out-alt"></i> Check Out Time</label>
+                    <div class="time-picker-group">
+                        <input type="number" id="pastCheckOutHour" class="form-input time-part" min="1" max="12" placeholder="HH">
+                        <span class="time-sep">:</span>
+                        <input type="number" id="pastCheckOutMin" class="form-input time-part" min="0" max="59" placeholder="MM">
+                        <div class="ampm-toggle">
+                            <button type="button" class="ampm-btn" data-target="pastCheckOut" data-val="AM">AM</button>
+                            <button type="button" class="ampm-btn active" data-target="pastCheckOut" data-val="PM">PM</button>
+                        </div>
+                    </div>
+                </div>
+                <p class="form-hint"><i class="fas fa-info-circle"></i> Select a past date and enter your check-in/out times.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" id="cancelAddPastBtn">Cancel</button>
+                <button class="btn btn-primary" id="saveAddPastBtn"><i class="fas fa-save"></i> Save Attendance</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Time Modal -->
+    <div class="modal" id="editTimeModal">
+        <div class="modal-content modal-sm">
+            <div class="modal-header">
+                <h3><i class="fas fa-clock"></i> Edit Attendance Time</h3>
+                <button class="modal-close" id="closeEditModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label><i class="fas fa-sign-in-alt"></i> Check In Time</label>
+                    <div class="time-picker-group">
+                        <input type="number" id="editCheckInHour" class="form-input time-part" min="1" max="12" placeholder="HH">
+                        <span class="time-sep">:</span>
+                        <input type="number" id="editCheckInMin" class="form-input time-part" min="0" max="59" placeholder="MM">
+                        <div class="ampm-toggle">
+                            <button type="button" class="ampm-btn active" data-target="checkIn" data-val="AM">AM</button>
+                            <button type="button" class="ampm-btn" data-target="checkIn" data-val="PM">PM</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group" id="editCheckOutGroup">
+                    <label><i class="fas fa-sign-out-alt"></i> Check Out Time</label>
+                    <div class="time-picker-group">
+                        <input type="number" id="editCheckOutHour" class="form-input time-part" min="1" max="12" placeholder="HH">
+                        <span class="time-sep">:</span>
+                        <input type="number" id="editCheckOutMin" class="form-input time-part" min="0" max="59" placeholder="MM">
+                        <div class="ampm-toggle">
+                            <button type="button" class="ampm-btn" data-target="checkOut" data-val="AM">AM</button>
+                            <button type="button" class="ampm-btn active" data-target="checkOut" data-val="PM">PM</button>
+                        </div>
+                    </div>
+                </div>
+                <p class="form-hint"><i class="fas fa-info-circle"></i> You can type the time or click AM/PM to switch.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" id="cancelEditBtn">Cancel</button>
+                <button class="btn btn-primary" id="saveEditTimeBtn"><i class="fas fa-save"></i> Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="js/firebase.js"></script>
+    <script type="module" src="js/auth.js"></script>
+    <script type="module" src="js/attendance.js"></script>
+    <script type="module">
+        // Wait for Firebase to initialize from js/firebase.js
+        const waitForFirebase = () => {
+            return new Promise((resolve) => {
+                const check = () => {
+                    if (window.firebaseAuth && window.firebaseDb) {
+                        resolve();
+                    } else {
+                        setTimeout(check, 50);
+                    }
+                };
+                check();
+            });
+        };
+
+        // Wait for both Firebase and attendance.js to load
+        const waitForDependencies = () => {
+            return new Promise((resolve) => {
+                const check = () => {
+                    if (window.firebaseAuth && window.firebaseDb && window.setupDashboard) {
+                        resolve();
+                    } else {
+                        setTimeout(check, 50);
+                    }
+                };
+                check();
+            });
+        };
+
+        waitForDependencies().then(() => {
+            const auth = window.firebaseAuth;
+            const db = window.firebaseDb;
+
+            window.onAuthStateChanged(auth, async (user) => {
+                if (!user) { window.location.href = 'login.html'; return; }
+                try {
+                    const userDoc = await window.getDoc(window.doc(db, 'users', user.uid));
+                    if (!userDoc.exists()) { window.location.href = 'login.html'; return; }
+                    const userData = { id: userDoc.id, ...userDoc.data() };
+                    if (userData.role === 'admin') { window.location.href = 'admin.html'; return; }
+                    sessionStorage.setItem('currentUser', JSON.stringify(userData));
+                    window.setupDashboard(userData);
+                } catch (error) {
+                    console.error('Error loading dashboard:', error);
+                }
+                // Always hide loading overlay
+                document.getElementById('loadingOverlay').style.display = 'none';
+            });
+        });
+    </script>
+</body>
+</html>
