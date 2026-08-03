@@ -527,6 +527,12 @@ img {
     gap: var(--spacing-md);
 }
 
+.header-actions .btn {
+    font-size: 1rem;
+    font-weight: 700;
+    padding: 0.75rem 1.5rem;
+}
+
 /* Hero Section */
 .hero {
     display: grid;
@@ -1664,8 +1670,17 @@ img {
         padding: var(--spacing-md);
     }
     
-    .header-actions .btn-outline {
+    .logo span {
         display: none;
+    }
+    
+    .header-actions {
+        gap: var(--spacing-sm);
+    }
+    
+    .header-actions .btn {
+        padding: 0.625rem 1rem;
+        font-size: 0.9rem;
     }
     
     .hero {
