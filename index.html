@@ -184,5 +184,14 @@
             document.getElementById('loadingOverlay').style.display = 'none';
         });
     </script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js').catch((err) => {
+                    console.error('Service worker registration failed:', err);
+                });
+            });
+        }
+    </script>
 </body>
 </html>
