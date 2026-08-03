@@ -196,22 +196,22 @@ async function loadDashboardStats() {
             }
         });
         
-        // Get today's attendance
+        // Get today's attendance for every employee concurrently instead of one at a time
         const today = getTodayDate();
+        const attendanceDocs = await Promise.all(
+            employeeIds.map(empId => getDoc(doc(db, 'attendance', empId, 'records', today)))
+        );
+
         let presentToday = 0;
         let checkedOut = 0;
-        
-        for (const empId of employeeIds) {
-            const attendanceRef = doc(db, 'attendance', empId, 'records', today);
-            const attendanceDoc = await getDoc(attendanceRef);
-            
+        attendanceDocs.forEach(attendanceDoc => {
             if (attendanceDoc.exists()) {
                 presentToday++;
                 if (attendanceDoc.data().checkOut) {
                     checkedOut++;
                 }
             }
-        }
+        });
         
         const notCheckedIn = totalEmployees - presentToday;
         
@@ -255,13 +255,17 @@ async function loadTodayAttendanceAdmin() {
 
         const holiday = await getHoliday(today);
 
-        let html = '';
-        
-        for (const emp of employees) {
+        // Fetch every employee's today-record + paid-leave status concurrently
+        // instead of one employee at a time (which was 2 round trips PER employee,
+        // in sequence -- the main cause of the slow load with more than a couple
+        // of employees).
+        const rows = await Promise.all(employees.map(async (emp) => {
             const attendanceRef = doc(db, 'attendance', emp.id, 'records', today);
-            const attendanceDoc = await getDoc(attendanceRef);
+            const [attendanceDoc, paidLeave] = await Promise.all([
+                getDoc(attendanceRef),
+                getPaidLeave(emp.id, today)
+            ]);
             const attendanceData = attendanceDoc.exists() ? attendanceDoc.data() : null;
-            const paidLeave = await getPaidLeave(emp.id, today);
 
             const resolved = resolveDayStatus({
                 dateStr: today,
@@ -270,8 +274,8 @@ async function loadTodayAttendanceAdmin() {
                 paidLeave: paidLeave && paidLeave.status === 'approved' ? paidLeave : null,
                 isFutureOrToday: true
             });
-            
-            html += `
+
+            return `
                 <tr>
                     <td>${emp.name}</td>
                     <td>${emp.email}</td>
@@ -281,9 +285,9 @@ async function loadTodayAttendanceAdmin() {
                     <td><span class="status-badge ${resolved.statusClass}">${resolved.statusLabel}</span></td>
                 </tr>
             `;
-        }
-        
-        tableBody.innerHTML = html;
+        }));
+
+        tableBody.innerHTML = rows.join('');
         
     } catch (error) {
         console.error('Error loading today attendance:', error);
@@ -743,19 +747,25 @@ async function loadAttendanceRecords() {
         const todayStr = getTodayDate();
         
         let allRecords = [];
-        
-        for (const emp of employees) {
+
+        // Fetch every employee's attendance + leave records concurrently
+        const perEmployee = await Promise.all(employees.map(async (emp) => {
             const attendanceRef = collection(db, 'attendance', emp.id, 'records');
             const q = query(
                 attendanceRef,
                 where('date', '>=', dateFrom),
                 where('date', '<=', dateTo)
             );
-            const snapshot = await getDocs(q);
+            const [snapshot, leaveMap] = await Promise.all([
+                getDocs(q),
+                getApprovedLeavesInRange(emp.id, dateFrom, dateTo)
+            ]);
             const attendanceMap = new Map();
             snapshot.forEach(docSnap => attendanceMap.set(docSnap.id, docSnap.data()));
+            return { emp, attendanceMap, leaveMap };
+        }));
 
-            const leaveMap = await getApprovedLeavesInRange(emp.id, dateFrom, dateTo);
+        for (const { emp, attendanceMap, leaveMap } of perEmployee) {
 
             for (const dateStr of dateList) {
                 const resolved = resolveDayStatus({
@@ -856,18 +866,23 @@ async function exportToCSV() {
         const dateList = getDaysInMonth(year, month).filter(d => d >= LAUNCH_DATE && d <= getTodayDate());
         const holidayMap = await getHolidaysInRange(firstDayStr, lastDayStr);
         
-        for (const emp of employees) {
+        const perEmployee = await Promise.all(employees.map(async (emp) => {
             const attendanceRef = collection(db, 'attendance', emp.id, 'records');
             const q = query(
                 attendanceRef,
                 where('date', '>=', firstDayStr),
                 where('date', '<=', lastDayStr)
             );
-            const snapshot = await getDocs(q);
+            const [snapshot, leaveMap] = await Promise.all([
+                getDocs(q),
+                getApprovedLeavesInRange(emp.id, firstDayStr, lastDayStr)
+            ]);
             const attendanceMap = new Map();
             snapshot.forEach(docSnap => attendanceMap.set(docSnap.id, docSnap.data()));
+            return { emp, attendanceMap, leaveMap };
+        }));
 
-            const leaveMap = await getApprovedLeavesInRange(emp.id, firstDayStr, lastDayStr);
+        for (const { emp, attendanceMap, leaveMap } of perEmployee) {
 
             for (const dateStr of dateList) {
                 const resolved = resolveDayStatus({
@@ -958,19 +973,25 @@ async function loadMonthlySummary() {
 
         let presentCount = 0, weekOffCount = 0, holidayCount = 0, paidLeaveCount = 0, absentCount = 0;
         let totalHours = 0, totalLess = 0, totalOvertime = 0;
-        
-        for (const emp of employees) {
+
+        // Fetch every employee's attendance + leave records concurrently
+        const perEmployee = await Promise.all(employees.map(async (emp) => {
             const attendanceRef = collection(db, 'attendance', emp.id, 'records');
             const attendanceQuery = query(
                 attendanceRef,
                 where('date', '>=', firstDayStr),
                 where('date', '<=', lastDayStr)
             );
-            const snapshot = await getDocs(attendanceQuery);
+            const [snapshot, leaveMap] = await Promise.all([
+                getDocs(attendanceQuery),
+                getApprovedLeavesInRange(emp.id, firstDayStr, lastDayStr)
+            ]);
             const attendanceMap = new Map();
             snapshot.forEach(docSnap => attendanceMap.set(docSnap.id, docSnap.data()));
+            return { attendanceMap, leaveMap };
+        }));
 
-            const leaveMap = await getApprovedLeavesInRange(emp.id, firstDayStr, lastDayStr);
+        for (const { attendanceMap, leaveMap } of perEmployee) {
 
             for (const dateStr of dateList) {
                 // Skip days that haven't happened yet this month
