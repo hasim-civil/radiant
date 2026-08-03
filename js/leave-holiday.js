@@ -326,7 +326,7 @@ function getDaysInMonth(year, month) {
     const lastDay = new Date(year, month + 1, 0).getDate();
     for (let d = 1; d <= lastDay; d++) {
         const dt = new Date(year, month, d);
-        days.push(dt.toISOString().split('T')[0]);
+        days.push(toLocalDateString(dt));
     }
     return days;
 }
