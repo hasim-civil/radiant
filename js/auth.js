@@ -103,9 +103,23 @@ function formatDate(date) {
  * Get today's date in YYYY-MM-DD format
  * @returns {string} Today's date
  */
+/**
+ * Format a Date object as a local YYYY-MM-DD string.
+ * IMPORTANT: never use date.toISOString().split('T')[0] for this — toISOString()
+ * converts to UTC first, which rolls the date back by one for anyone in a timezone
+ * ahead of UTC (e.g. India) during early morning hours. This uses the Date object's
+ * own local getFullYear/getMonth/getDate instead, so "today" always matches the
+ * device's local calendar day.
+ */
+function toLocalDateString(date) {
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, '0');
+    const d = String(date.getDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`;
+}
+
 function getTodayDate() {
-    const today = new Date();
-    return today.toISOString().split('T')[0];
+    return toLocalDateString(new Date());
 }
 
 /**
@@ -269,6 +283,7 @@ window.showToast = showToast;
 window.getErrorMessage = getErrorMessage;
 window.formatDate = formatDate;
 window.getTodayDate = getTodayDate;
+window.toLocalDateString = toLocalDateString;
 window.formatTime = formatTime;
 window.registerUser = registerUser;
 window.loginUser = loginUser;
