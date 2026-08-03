@@ -240,7 +240,7 @@ function setupAttendanceButtons() {
     // Set max date for past attendance date picker (yesterday)
     const yesterday = new Date();
     yesterday.setDate(yesterday.getDate() - 1);
-    document.getElementById('pastAttendanceDate').max = yesterday.toISOString().split('T')[0];
+    document.getElementById('pastAttendanceDate').max = toLocalDateString(yesterday);
 
     // Request Leave
     const requestLeaveBtn = document.getElementById('requestLeaveBtn');
@@ -844,7 +844,7 @@ async function loadAttendanceStats() {
         // Get all attendance records for current month
         const today = new Date();
         const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
-        const firstDayStr = firstDay.toISOString().split('T')[0];
+        const firstDayStr = toLocalDateString(firstDay);
         
         const attendanceRef = collection(db, 'attendance', currentUser.uid, 'records');
         const q = query(attendanceRef, where('date', '>=', firstDayStr));
@@ -908,7 +908,7 @@ async function loadRecentAttendance() {
         const dateList = [];
         const cursor = new Date();
         for (let i = 0; i < 7; i++) {
-            dateList.unshift(cursor.toISOString().split('T')[0]);
+            dateList.unshift(toLocalDateString(cursor));
             cursor.setDate(cursor.getDate() - 1);
         }
         const filteredDates = dateList.filter(d => d >= LAUNCH_DATE);
@@ -978,8 +978,8 @@ async function loadMonthlyAttendance() {
     // Calculate date range
     const firstDay = new Date(year, month, 1);
     const lastDay = new Date(year, month + 1, 0);
-    const firstDayStr = firstDay.toISOString().split('T')[0];
-    const lastDayStr = lastDay.toISOString().split('T')[0];
+    const firstDayStr = toLocalDateString(firstDay);
+    const lastDayStr = toLocalDateString(lastDay);
     const todayStr = getTodayDate();
     
     try {
