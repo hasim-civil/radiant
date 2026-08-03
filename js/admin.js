@@ -656,10 +656,10 @@ function setupAdminFilters() {
     // Set default dates (current month, but never before launch)
     const today = new Date();
     const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
-    const firstDayStr = firstDay.toISOString().split('T')[0];
+    const firstDayStr = toLocalDateString(firstDay);
     
     dateFrom.value = firstDayStr < LAUNCH_DATE ? LAUNCH_DATE : firstDayStr;
-    dateTo.value = today.toISOString().split('T')[0];
+    dateTo.value = toLocalDateString(today);
     
     // Apply filter button
     document.getElementById('applyFilterBtn').addEventListener('click', loadAttendanceRecords);
@@ -668,7 +668,7 @@ function setupAdminFilters() {
     document.getElementById('clearFilterBtn').addEventListener('click', () => {
         document.getElementById('employeeFilter').value = 'all';
         dateFrom.value = firstDayStr < LAUNCH_DATE ? LAUNCH_DATE : firstDayStr;
-        dateTo.value = today.toISOString().split('T')[0];
+        dateTo.value = toLocalDateString(today);
         document.getElementById('attendanceRecordsTable').innerHTML = 
             '<tr><td colspan="6" class="text-center">Select filters and click Apply</td></tr>';
     });
@@ -735,7 +735,7 @@ async function loadAttendanceRecords() {
         const cursor = new Date(dateFrom);
         const rangeEnd = new Date(dateTo);
         while (cursor <= rangeEnd) {
-            dateList.push(cursor.toISOString().split('T')[0]);
+            dateList.push(toLocalDateString(cursor));
             cursor.setDate(cursor.getDate() + 1);
         }
 
@@ -828,8 +828,8 @@ async function exportToCSV() {
     // Calculate date range
     const firstDay = new Date(year, month, 1);
     const lastDay = new Date(year, month + 1, 0);
-    const firstDayStr = firstDay.toISOString().split('T')[0];
-    const lastDayStr = lastDay.toISOString().split('T')[0];
+    const firstDayStr = toLocalDateString(firstDay);
+    const lastDayStr = toLocalDateString(lastDay);
     
     showLoading();
     
@@ -938,8 +938,8 @@ async function loadMonthlySummary() {
     
     const firstDay = new Date(year, month, 1);
     const lastDay = new Date(year, month + 1, 0);
-    const firstDayStr = firstDay.toISOString().split('T')[0];
-    const lastDayStr = lastDay.toISOString().split('T')[0];
+    const firstDayStr = toLocalDateString(firstDay);
+    const lastDayStr = toLocalDateString(lastDay);
     const todayStr = getTodayDate();
     
     try {
