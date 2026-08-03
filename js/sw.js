@@ -1,8 +1,8 @@
-// Radiant Attendance — Service Worker
+// Smart Attendance — Service Worker
 // Bump this on every deploy that changes cached files, so old caches get cleared.
-const CACHE_VERSION = 'v1';
-const STATIC_CACHE = `radiant-static-${CACHE_VERSION}`;
-const RUNTIME_CACHE = `radiant-runtime-${CACHE_VERSION}`;
+const CACHE_VERSION = 'v2';
+const STATIC_CACHE = `smart-attendance-static-${CACHE_VERSION}`;
+const RUNTIME_CACHE = `smart-attendance-runtime-${CACHE_VERSION}`;
 
 // App shell: the actual pages, styles, scripts and images that make the app usable offline.
 const APP_SHELL = [
@@ -21,7 +21,6 @@ const APP_SHELL = [
     'js/leave-holiday.js',
     'js/attendance.js',
     'js/admin.js',
-    'images/logo.png',
     'images/icon-192.png',
     'images/icon-512.png',
     'images/icon-maskable-512.png',
