@@ -28,11 +28,8 @@
                 <span>Radiant Attendance</span>
             </div>
             <div class="header-actions">
-                <button class="theme-toggle" id="themeToggle" title="Toggle Theme">
-                    <i class="fas fa-moon"></i>
-                </button>
                 <a href="login.html" class="btn btn-outline">Login</a>
-                <a href="register.html" class="btn btn-primary">Get Started</a>
+                <a href="register.html" class="btn btn-primary">Sign Up</a>
             </div>
         </header>
 
@@ -44,9 +41,6 @@
                 <div class="hero-buttons">
                     <a href="register.html" class="btn btn-primary btn-lg">
                         <i class="fas fa-rocket"></i> Start Free
-                    </a>
-                    <a href="#features" class="btn btn-outline btn-lg">
-                        <i class="fas fa-info-circle"></i> Learn More
                     </a>
                 </div>
             </div>
@@ -125,7 +119,6 @@
 
         <!-- Footer -->
         <footer class="landing-footer">
-            <p>&copy; 2024 Radiant Attendance. All rights reserved.</p>
             <p class="creator-credit">Created by Hasim</p>
         </footer>
     </div>
@@ -135,38 +128,46 @@
 
     <script type="module" src="js/firebase.js"></script>
     <script type="module" src="js/auth.js"></script>
-    <script>
-        // Theme toggle functionality
-        const themeToggle = document.getElementById('themeToggle');
-        const body = document.body;
-        
-        // Check for saved theme preference
-        const savedTheme = localStorage.getItem('theme') || 'light';
-        body.className = savedTheme + '-mode';
-        updateThemeIcon();
-        
-        themeToggle.addEventListener('click', () => {
-            if (body.classList.contains('light-mode')) {
-                body.classList.replace('light-mode', 'dark-mode');
-                localStorage.setItem('theme', 'dark');
-            } else {
-                body.classList.replace('dark-mode', 'light-mode');
-                localStorage.setItem('theme', 'light');
-            }
-            updateThemeIcon();
+    <script type="module">
+        // Wait for Firebase to initialize from js/firebase.js
+        const waitForFirebase = () => {
+            return new Promise((resolve) => {
+                const check = () => {
+                    if (window.firebaseAuth && window.firebaseDb) {
+                        resolve();
+                    } else {
+                        setTimeout(check, 50);
+                    }
+                };
+                check();
+            });
+        };
+
+        waitForFirebase().then(() => {
+            const auth = window.firebaseAuth;
+            const db = window.firebaseDb;
+
+            // If already logged in, skip the landing page and go straight to the dashboard
+            window.onAuthStateChanged(auth, async (user) => {
+                if (user) {
+                    try {
+                        const userDoc = await window.getDoc(window.doc(db, 'users', user.uid));
+                        if (userDoc.exists()) {
+                            const role = userDoc.data().role;
+                            window.location.href = role === 'admin' ? 'admin.html' : 'dashboard.html';
+                            return;
+                        }
+                    } catch (e) {
+                        console.error('Error fetching user data:', e);
+                    }
+                }
+                // Not logged in (or lookup failed) -- show the landing page
+                document.getElementById('loadingOverlay').style.display = 'none';
+            });
+        }).catch((e) => {
+            console.error('Failed to initialize Firebase:', e);
+            document.getElementById('loadingOverlay').style.display = 'none';
         });
-        
-        function updateThemeIcon() {
-            const icon = themeToggle.querySelector('i');
-            if (body.classList.contains('dark-mode')) {
-                icon.classList.replace('fa-moon', 'fa-sun');
-            } else {
-                icon.classList.replace('fa-sun', 'fa-moon');
-            }
-        }
-        
-        // Hide loading overlay
-        document.getElementById('loadingOverlay').style.display = 'none';
     </script>
 </body>
 </html>
