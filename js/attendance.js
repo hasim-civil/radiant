@@ -760,11 +760,12 @@ async function loadTodayAttendance() {
     
     try {
         const attendanceRef = doc(db, 'attendance', currentUser.uid, 'records', today);
-        const attendanceDoc = await getDoc(attendanceRef);
+        const [attendanceDoc, holiday, paidLeave] = await Promise.all([
+            getDoc(attendanceRef),
+            getHoliday(today),
+            getPaidLeave(currentUser.uid, today)
+        ]);
         const attendanceData = attendanceDoc.exists() ? attendanceDoc.data() : null;
-
-        const holiday = await getHoliday(today);
-        const paidLeave = await getPaidLeave(currentUser.uid, today);
 
         const resolved = resolveDayStatus({
             dateStr: today,
@@ -922,12 +923,13 @@ async function loadRecentAttendance() {
 
         const attendanceRef = collection(db, 'attendance', currentUser.uid, 'records');
         const q = query(attendanceRef, where('date', '>=', startDate), where('date', '<=', endDate));
-        const snapshot = await getDocs(q);
+        const [snapshot, holidayMap, leaveMap] = await Promise.all([
+            getDocs(q),
+            getHolidaysInRange(startDate, endDate),
+            getApprovedLeavesInRange(currentUser.uid, startDate, endDate)
+        ]);
         const attendanceMap = new Map();
         snapshot.forEach(docSnap => attendanceMap.set(docSnap.id, docSnap.data()));
-
-        const holidayMap = await getHolidaysInRange(startDate, endDate);
-        const leaveMap = await getApprovedLeavesInRange(currentUser.uid, startDate, endDate);
 
         let html = '';
         // Most recent first
@@ -989,12 +991,13 @@ async function loadMonthlyAttendance() {
             where('date', '>=', firstDayStr),
             where('date', '<=', lastDayStr)
         );
-        const snapshot = await getDocs(q);
+        const [snapshot, holidayMap, leaveMap] = await Promise.all([
+            getDocs(q),
+            getHolidaysInRange(firstDayStr, lastDayStr),
+            getApprovedLeavesInRange(currentUser.uid, firstDayStr, lastDayStr)
+        ]);
         const attendanceMap = new Map();
         snapshot.forEach(docSnap => attendanceMap.set(docSnap.id, docSnap.data()));
-
-        const holidayMap = await getHolidaysInRange(firstDayStr, lastDayStr);
-        const leaveMap = await getApprovedLeavesInRange(currentUser.uid, firstDayStr, lastDayStr);
 
         // Every day in the month, from launch date up to today (future days
         // aren't history yet, and nothing before launch was ever tracked)
