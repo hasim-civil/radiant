@@ -1,6 +1,6 @@
 {
-  "name": "Radiant Attendance",
-  "short_name": "Radiant",
+  "name": "Smart Attendance",
+  "short_name": "Smart Attendance",
   "description": "Employee Attendance Management System",
   "start_url": "index.html",
   "display": "standalone",
