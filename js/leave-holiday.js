@@ -224,25 +224,30 @@ async function decidePaidLeave(userId, dateStr, decision) {
  */
 async function getAllLeaveRequests(employees, statusFilter = null) {
     const db = window.firebaseDb;
-    const results = [];
-    for (const emp of employees) {
+
+    const perEmployee = await Promise.all(employees.map(async (emp) => {
         try {
             const leavesRef = collection(db, 'paidLeaves', emp.id, 'records');
             const q = statusFilter
                 ? query(leavesRef, where('status', '==', statusFilter))
                 : query(leavesRef);
             const snapshot = await getDocs(q);
+            const items = [];
             snapshot.forEach(docSnap => {
-                results.push({
+                items.push({
                     ...docSnap.data(),
                     employeeId: emp.id,
                     employeeName: emp.name
                 });
             });
+            return items;
         } catch (error) {
             console.error(`Error loading leave requests for ${emp.id}:`, error);
+            return [];
         }
-    }
+    }));
+
+    const results = perEmployee.flat();
     // Most recently requested first
     results.sort((a, b) => (b.requestedAt?.toMillis?.() || 0) - (a.requestedAt?.toMillis?.() || 0));
     return results;
