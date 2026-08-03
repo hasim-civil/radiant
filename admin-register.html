@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Registration - Radiant Attendance</title>
+    <title>Admin Registration - Smart Attendance</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -19,7 +19,7 @@
             <div class="auth-header">
                 <a href="index.html" class="auth-logo">
                     <img src="images/erasebg-transformed.png" alt="Logo" style="height:36px;width:auto;margin-right:8px;">
-                    <span>Radiant Attendance</span>
+                    <span>Smart Attendance</span>
                 </a>
                 <h1><i class="fas fa-user-shield"></i> Admin Registration</h1>
                 <p>Create an administrator account</p>
@@ -176,6 +176,15 @@
 
         // Check if user is already logged in
         checkAuthState();
+    </script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js').catch((err) => {
+                    console.error('Service worker registration failed:', err);
+                });
+            });
+        }
     </script>
 </body>
 </html>
