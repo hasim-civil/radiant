@@ -1135,6 +1135,16 @@ img {
     color: var(--secondary-color);
 }
 
+.status-badge.outstation {
+    background: rgba(251, 191, 36, 0.2);
+    color: var(--warning-color);
+}
+
+.status-badge.wfh {
+    background: rgba(45, 212, 191, 0.2);
+    color: #2dd4bf;
+}
+
 .action-buttons {
     display: flex;
     gap: var(--spacing-md);
