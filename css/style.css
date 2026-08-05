@@ -79,6 +79,8 @@
 
 html {
     scroll-behavior: smooth;
+    overflow-x: hidden;
+    width: 100%;
 }
 
 body {
@@ -88,6 +90,8 @@ body {
     color: var(--text-primary);
     line-height: 1.6;
     min-height: 100vh;
+    overflow-x: hidden;
+    width: 100%;
     transition: background-color var(--transition-normal), color var(--transition-normal);
 }
 
@@ -898,20 +902,28 @@ img {
     cursor: pointer;
 }
 
+.welcome-text {
+    min-width: 0;
+    flex: 1 1 auto;
+}
+
 .welcome-text h2 {
     font-size: 1.25rem;
     color: var(--text-primary);
+    overflow-wrap: break-word;
 }
 
 .welcome-text p {
     font-size: 0.875rem;
     color: var(--text-secondary);
+    overflow-wrap: break-word;
 }
 
 .top-bar-right {
     display: flex;
     align-items: center;
     gap: var(--spacing-lg);
+    flex-shrink: 0;
 }
 
 .live-clock {
@@ -1676,6 +1688,10 @@ img {
 }
 
 @media (max-width: 768px) {
+    html {
+        font-size: 15px;
+    }
+    
     .landing-header {
         padding: var(--spacing-md);
     }
@@ -1774,6 +1790,16 @@ img {
 }
 
 @media (max-width: 480px) {
+    html {
+        font-size: 14px;
+    }
+    
+    .stat-icon {
+        width: 42px;
+        height: 42px;
+        font-size: 1rem;
+    }
+    
     .stats-grid {
         grid-template-columns: 1fr;
     }
@@ -1794,6 +1820,16 @@ img {
     .toast-container {
         left: var(--spacing-md);
         right: var(--spacing-md);
+    }
+
+    body::before {
+        width: 260px;
+        height: 260px;
+    }
+
+    body::after {
+        width: 220px;
+        height: 220px;
     }
 }
 
