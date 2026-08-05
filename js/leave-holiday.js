@@ -253,6 +253,26 @@ async function getAllLeaveRequests(employees, statusFilter = null) {
     return results;
 }
 
+/**
+ * Work Location options for a Present attendance record.
+ * 'office' is the default for every existing and new record unless explicitly
+ * changed via the Edit Time / Add Past Attendance forms.
+ */
+const WORK_LOCATIONS = {
+    office: { label: 'Present', icon: '🏢', badgeClass: 'present', dropdownLabel: '🏢 Office' },
+    outstation: { label: 'Outstation', icon: '🚗', badgeClass: 'outstation', dropdownLabel: '🚗 Outstation' },
+    wfh: { label: 'WFH', icon: '🏠', badgeClass: 'wfh', dropdownLabel: '🏠 Work From Home' }
+};
+
+/**
+ * Look up the display info for a work location value, falling back to Office
+ * for missing/unrecognized values (covers existing records with no field set).
+ * @param {string|undefined|null} location
+ */
+function getWorkLocationMeta(location) {
+    return WORK_LOCATIONS[location] || WORK_LOCATIONS.office;
+}
+
 // ===================================
 // Priority Resolution
 // ===================================
@@ -305,13 +325,16 @@ function resolveDayStatus({ dateStr, attendanceData, holiday, paidLeave, isFutur
             }
         }
 
-        const statusClass = isPresent ? 'present' : 'incomplete';
-        const statusLabel = isPresent ? 'Present' : 'Incomplete';
+        const statusClass = isPresent ? getWorkLocationMeta(attendanceData.workLocation).badgeClass : 'incomplete';
+        const statusLabel = isPresent
+            ? `${getWorkLocationMeta(attendanceData.workLocation).icon} ${getWorkLocationMeta(attendanceData.workLocation).label}`
+            : 'Incomplete';
 
         return {
             status: isPresent ? 'present' : 'incomplete',
             statusLabel, statusClass,
             checkIn, checkOut, hours, hoursValue, lessOtCell, lessValue, overtimeValue,
+            workLocation: attendanceData.workLocation || 'office',
             countsAsPresent: isPresent
         };
     }
@@ -338,6 +361,8 @@ function getDaysInMonth(year, month) {
 
 // Make functions globally available (same pattern as the other modules)
 window.LAUNCH_DATE = LAUNCH_DATE;
+window.WORK_LOCATIONS = WORK_LOCATIONS;
+window.getWorkLocationMeta = getWorkLocationMeta;
 window.formatHoursMinutes = formatHoursMinutes;
 window.WEEK_OFF_DAYS = WEEK_OFF_DAYS;
 window.isWeekOff = isWeekOff;
