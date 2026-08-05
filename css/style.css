@@ -1739,6 +1739,10 @@ img {
         display: block;
     }
     
+    .sidebar-toggle {
+        display: none;
+    }
+    
     .top-bar {
         flex-wrap: wrap;
         gap: var(--spacing-md);
