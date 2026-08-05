@@ -328,7 +328,11 @@ function openAddPastAttendanceModal() {
     document.querySelectorAll('.ampm-btn[data-target="pastCheckOut"]').forEach(b => {
         b.classList.toggle('active', b.dataset.val === 'PM');
     });
-    
+
+    // Reset Work Location to the default (Office)
+    const pastWorkLocation = document.getElementById('pastWorkLocation');
+    if (pastWorkLocation) pastWorkLocation.value = 'office';
+
     document.getElementById('addPastAttendanceModal').classList.add('active');
 }
 
@@ -431,7 +435,8 @@ async function savePastAttendance() {
             checkOut: Timestamp.fromDate(checkOutDate),
             totalHours: totalHours,
             status: 'present',
-            date: selectedDate
+            date: selectedDate,
+            workLocation: document.getElementById('pastWorkLocation')?.value || 'office'
         });
 
         hideLoading();
@@ -468,6 +473,13 @@ function openEditTimeModal() {
         checkOutGroup.style.display = 'block';
     } else {
         checkOutGroup.style.display = 'none';
+    }
+
+    // Pre-fill Work Location (defaults to Office if the record has none set yet)
+    const editWorkLocation = document.getElementById('editWorkLocation');
+    if (editWorkLocation) {
+        const currentLocation = document.getElementById('editTimeBtn')?.dataset.workLocation || 'office';
+        editWorkLocation.value = currentLocation;
     }
 
     document.getElementById('editTimeModal').classList.add('active');
@@ -576,7 +588,8 @@ async function saveEditedTime() {
 
         const updateData = {
             checkIn: Timestamp.fromDate(newCheckIn),
-            date: today
+            date: today,
+            workLocation: document.getElementById('editWorkLocation')?.value || 'office'
         };
         if (newCheckOut) {
             updateData.checkOut = Timestamp.fromDate(newCheckOut);
@@ -659,7 +672,8 @@ async function handleCheckIn() {
             checkOut: null,
             totalHours: null,
             status: 'incomplete',
-            date: today
+            date: today,
+            workLocation: 'office'
         });
         
         hideLoading();
@@ -782,6 +796,11 @@ async function loadTodayAttendance() {
             workingHours.textContent = '--:--';
             todayStatus.textContent = resolved.statusLabel;
             todayStatus.className = `status-badge ${resolved.statusClass}`;
+            const todayWorkLocationOff = document.getElementById('todayWorkLocation');
+            if (todayWorkLocationOff) {
+                todayWorkLocationOff.textContent = '--';
+                todayWorkLocationOff.className = 'status-badge';
+            }
             checkInBtn.disabled = true;
             checkOutBtn.disabled = true;
             if (editTimeBtn) editTimeBtn.style.display = 'none';
@@ -807,12 +826,28 @@ async function loadTodayAttendance() {
                 workingHours.textContent = formatHoursMinutes(attendanceData.totalHours);
             }
             
-            // Update status badge
-            todayStatus.textContent = attendanceData.status === 'present' ? 'Present' : 'Incomplete';
-            todayStatus.className = `status-badge ${attendanceData.status}`;
+            // Update status badge (location-aware: Present/Outstation/WFH, or Incomplete)
+            todayStatus.textContent = resolved.statusLabel;
+            todayStatus.className = `status-badge ${resolved.statusClass}`;
+
+            // Update Work Location row
+            const todayWorkLocation = document.getElementById('todayWorkLocation');
+            if (todayWorkLocation) {
+                if (attendanceData.status === 'present') {
+                    const meta = getWorkLocationMeta(attendanceData.workLocation);
+                    todayWorkLocation.textContent = `${meta.icon} ${meta.label === 'Present' ? 'Office' : meta.label}`;
+                    todayWorkLocation.className = `status-badge ${meta.badgeClass}`;
+                } else {
+                    todayWorkLocation.textContent = '--';
+                    todayWorkLocation.className = 'status-badge';
+                }
+            }
 
             // Show Edit Time button once checked in
-            if (editTimeBtn) editTimeBtn.style.display = 'inline-flex';
+            if (editTimeBtn) {
+                editTimeBtn.style.display = 'inline-flex';
+                editTimeBtn.dataset.workLocation = attendanceData.workLocation || 'office';
+            }
             
         } else {
             // Reset to default state
@@ -821,6 +856,11 @@ async function loadTodayAttendance() {
             workingHours.textContent = '--:--';
             todayStatus.textContent = 'Not Checked In';
             todayStatus.className = 'status-badge';
+            const todayWorkLocationEmpty = document.getElementById('todayWorkLocation');
+            if (todayWorkLocationEmpty) {
+                todayWorkLocationEmpty.textContent = '--';
+                todayWorkLocationEmpty.className = 'status-badge';
+            }
             checkInBtn.disabled = false;
             checkOutBtn.disabled = true;
             if (editTimeBtn) editTimeBtn.style.display = 'none';
