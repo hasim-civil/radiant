@@ -167,6 +167,10 @@
                                 <span class="status-label">Status</span>
                                 <span class="status-badge" id="todayStatus">Not Checked In</span>
                             </div>
+                            <div class="status-item">
+                                <span class="status-label">Work Location</span>
+                                <span class="status-badge" id="todayWorkLocation">--</span>
+                            </div>
                         </div>
                         <div class="action-buttons">
                             <button class="btn btn-success btn-lg" id="checkInBtn">
@@ -411,6 +415,14 @@
                         </div>
                     </div>
                 </div>
+                <div class="form-group">
+                    <label><i class="fas fa-map-marker-alt"></i> Work Location</label>
+                    <select id="pastWorkLocation" class="form-input">
+                        <option value="office">🏢 Office</option>
+                        <option value="outstation">🚗 Outstation</option>
+                        <option value="wfh">🏠 Work From Home</option>
+                    </select>
+                </div>
                 <p class="form-hint"><i class="fas fa-info-circle"></i> Select a past date and enter your check-in/out times.</p>
             </div>
             <div class="modal-footer">
@@ -451,6 +463,14 @@
                             <button type="button" class="ampm-btn active" data-target="checkOut" data-val="PM">PM</button>
                         </div>
                     </div>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-map-marker-alt"></i> Work Location</label>
+                    <select id="editWorkLocation" class="form-input">
+                        <option value="office">🏢 Office</option>
+                        <option value="outstation">🚗 Outstation</option>
+                        <option value="wfh">🏠 Work From Home</option>
+                    </select>
                 </div>
                 <p class="form-hint"><i class="fas fa-info-circle"></i> You can type the time or click AM/PM to switch.</p>
             </div>
