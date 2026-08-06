@@ -75,6 +75,15 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    max-width: 100%;
+}
+
+/* Elements that legitimately need to exceed their immediate parent's box
+   (fixed overlays, decorative background blobs, sidebar, positioned dropdowns)
+   opt back out of the blanket cap above via their own more-specific rules
+   further down this file -- CSS specificity means those still win. */
+html, body {
+    max-width: none;
 }
 
 html {
@@ -92,6 +101,8 @@ body {
     min-height: 100vh;
     overflow-x: hidden;
     width: 100%;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
     transition: background-color var(--transition-normal), color var(--transition-normal);
 }
 
@@ -628,7 +639,7 @@ img {
 
 .features-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr));
     gap: var(--spacing-lg);
     max-width: 1200px;
     margin: 0 auto;
@@ -983,7 +994,7 @@ img {
 /* Stats Grid */
 .stats-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr));
     gap: var(--spacing-lg);
     margin-bottom: var(--spacing-xl);
 }
@@ -1079,7 +1090,7 @@ img {
 
 .attendance-status {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(min(150px, 100%), 1fr));
     gap: var(--spacing-lg);
     margin-bottom: var(--spacing-xl);
 }
@@ -1170,6 +1181,8 @@ img {
 /* Tables */
 .table-responsive {
     overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    max-width: 100%;
 }
 
 .data-table {
@@ -1257,7 +1270,7 @@ img {
 /* Summary Cards */
 .summary-cards {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(min(150px, 100%), 1fr));
     gap: var(--spacing-lg);
     margin-bottom: var(--spacing-xl);
 }
@@ -1352,7 +1365,7 @@ img {
 /* Export Section */
 .export-options {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr));
     gap: var(--spacing-xl);
 }
 
@@ -1505,7 +1518,7 @@ img {
     box-shadow: var(--glass-shadow);
     animation: toastSlideIn 0.3s ease;
     min-width: 300px;
-    max-width: 400px;
+    max-width: min(400px, calc(100vw - 2rem));
 }
 
 @keyframes toastSlideIn {
@@ -1754,6 +1767,61 @@ img {
         gap: var(--spacing-md);
     }
     
+    .table-responsive {
+        overflow-x: visible;
+    }
+    
+    .data-table thead {
+        display: none;
+    }
+    
+    .data-table, .data-table tbody, .data-table tr, .data-table td {
+        display: block;
+        width: 100%;
+    }
+    
+    .data-table tr {
+        margin-bottom: var(--spacing-md);
+        border: 1px solid var(--glass-border);
+        border-radius: var(--radius-md);
+        padding: var(--spacing-sm) var(--spacing-md);
+        background: var(--glass-bg);
+    }
+    
+    .data-table td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: var(--spacing-md);
+        padding: 0.5rem 0;
+        border: none;
+        border-bottom: 1px solid var(--glass-border);
+        text-align: right;
+        white-space: normal;
+    }
+    
+    .data-table td:last-child {
+        border-bottom: none;
+    }
+    
+    .data-table td::before {
+        content: attr(data-label);
+        font-weight: 600;
+        font-size: 0.8rem;
+        color: var(--text-secondary);
+        text-align: left;
+        flex-shrink: 0;
+    }
+    
+    .data-table td[colspan] {
+        display: block;
+        text-align: center;
+    }
+    
+    .data-table td[colspan]::before {
+        content: none;
+    }
+    
     .stats-grid {
         grid-template-columns: repeat(2, 1fr);
     }
@@ -1789,7 +1857,8 @@ img {
     }
     
     .modal-content {
-        margin: var(--spacing-md);
+        width: calc(100% - 2 * var(--spacing-md));
+        margin: 0;
         max-height: calc(100vh - 2rem);
     }
 }
@@ -1819,6 +1888,7 @@ img {
     
     .toast {
         min-width: auto;
+        width: calc(100vw - 2rem);
         max-width: calc(100vw - 2rem);
     }
     
