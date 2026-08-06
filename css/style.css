@@ -1746,11 +1746,12 @@ img {
     .top-bar {
         flex-wrap: wrap;
         gap: var(--spacing-md);
+        max-width: 100%;
+        overflow: hidden;
     }
     
     .top-bar-right {
-        width: 100%;
-        justify-content: space-between;
+        gap: var(--spacing-md);
     }
     
     .stats-grid {
