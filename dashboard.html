@@ -2,15 +2,36 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Employee Dashboard - Smart Attendance</title>
     <link rel="manifest" href="manifest.json">
     <link rel="icon" type="image/png" sizes="192x192" href="images/icon-192.png">
     <link rel="icon" type="image/png" sizes="512x512" href="images/icon-512.png">
     <link rel="apple-touch-icon" href="images/icon-192.png">
     <meta name="theme-color" content="#8b5cf6">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap">
+    <link rel="stylesheet" href="css/design-system.css">
     <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" onload="this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
+    <script>
+    /* Theme boot. Runs before first paint so there is never a flash of the
+       wrong theme, which on a dark-theme phone is the difference between
+       polished and broken. */
+    (function () {
+        try {
+            var t = localStorage.getItem('sa-theme');
+            if (['light', 'dark', 'glass'].indexOf(t) === -1) t = 'light';
+            document.documentElement.setAttribute('data-theme', t);
+            var m = document.querySelector('meta[name="theme-color"]');
+            if (m) m.setAttribute('content', t === 'light' ? '#FFFFFF' : t === 'dark' ? '#101019' : '#120B2E');
+        } catch (e) {
+            document.documentElement.setAttribute('data-theme', 'light');
+        }
+    })();
+    </script>
 </head>
 <body class="light-mode">
     <!-- Loading Overlay -->
@@ -601,5 +622,9 @@
             });
         }
     </script>
+    <!-- GSAP is optional: ui.js orchestrates with it when present and falls
+         back to CSS keyframes when it is blocked or offline. -->
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script defer src="js/ui.js"></script>
 </body>
 </html>
