@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Choose a theme — Smart Attendance</title>
+<meta name="theme-color" content="#FFFFFF">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap">
+
+<!-- The real design system. Because every token lives on [data-theme], a
+     nested element can carry a different theme than the page around it —
+     which is exactly what lets all three concepts render side by side,
+     using the same CSS that ships to production. Nothing here is a mock-up
+     of the design system; it *is* the design system. -->
+<link rel="stylesheet" href="css/design-system.css">
+<link rel="stylesheet" href="css/style.css">
+<link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" onload="this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
+
+<style>
+/* ---------------------------------------------------------------------------
+   Chooser chrome. This styling is for the picker itself and never ships.
+   --------------------------------------------------------------------------- */
+.chooser {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: var(--space-8) var(--space-5) var(--space-16);
+}
+
+.chooser-head { text-align: center; max-width: 62ch; margin: 0 auto var(--space-10); }
+
+.chooser-eyebrow {
+    display: inline-block;
+    margin-bottom: var(--space-3);
+    padding: var(--space-1) var(--space-4);
+    border-radius: var(--radius-full);
+    background: var(--brand-subtle);
+    color: var(--brand-text);
+    font-size: var(--text-2xs);
+    font-weight: var(--weight-bold);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+}
+
+.chooser-head h1 {
+    font-size: var(--text-2xl);
+    font-weight: var(--weight-black);
+    letter-spacing: var(--tracking-tight);
+    margin-bottom: var(--space-3);
+    text-wrap: balance;
+}
+
+.chooser-head p { color: var(--text-secondary); font-size: var(--text-base); }
+
+.concepts { display: grid; gap: var(--space-8); }
+
+@media (min-width: 900px)  { .concepts { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-6); } }
+
+.concept { display: flex; flex-direction: column; gap: var(--space-4); }
+
+.concept-meta { text-align: center; }
+
+.concept-name {
+    font-size: var(--text-lg);
+    font-weight: var(--weight-black);
+    letter-spacing: var(--tracking-tight);
+}
+
+.concept-desc {
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+    margin-top: var(--space-1);
+    min-height: 2.6em;
+}
+
+/* Swatch row — the palette, stated plainly. */
+.swatches { display: flex; justify-content: center; gap: 6px; margin-top: var(--space-3); }
+.swatches span {
+    width: 26px; height: 26px;
+    border-radius: var(--radius-xs);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-xs);
+}
+
+/* --- The phone --------------------------------------------------------------
+   A 360px-wide viewport, which is the most common Android width in use, so
+   what you see here is what the smallest common device actually gets.        */
+.phone {
+    position: relative;
+    width: 100%;
+    max-width: 360px;
+    margin: 0 auto;
+    aspect-ratio: 360 / 690;
+    border-radius: 34px;
+    padding: 10px;
+    background: #1b1b24;
+    box-shadow: 0 24px 60px rgba(20, 20, 40, 0.28), 0 0 0 1px rgba(0,0,0,0.06);
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.screen {
+    position: relative;
+    height: 100%;
+    border-radius: 26px;
+    overflow: hidden;
+    background-color: var(--canvas);
+    background-image: var(--canvas-image);
+    background-size: cover;
+    color: var(--text-primary);
+    font-family: var(--font-ui);
+    display: flex;
+    flex-direction: column;
+}
+
+/* A real scroll area, so the previews behave like the app. */
+.screen-scroll {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0 14px 70px;
+    scrollbar-width: none;
+}
+.screen-scroll::-webkit-scrollbar { display: none; }
+
+/* Scaled-down interior: the components are the production ones, just smaller,
+   because a 360px screen shown at 320px would otherwise misreport density. */
+.screen { font-size: 13px; }
+.screen .top-bar { position: sticky; margin: 0 -14px; padding-inline: 14px; padding-top: 14px; min-height: 52px; }
+.screen .welcome-text h2 { font-size: 14px; }
+.screen .welcome-text p { font-size: 10px; }
+.screen .user-avatar { width: 32px; height: 32px; font-size: 11px; }
+.screen .shift-ring { width: 148px; height: 148px; margin: 12px auto 16px; }
+.screen .ring-elapsed { font-size: 1.35rem; }
+.screen .stats-grid { margin-inline: -14px; padding-inline: 14px; grid-auto-columns: 52%; }
+.screen .stat-icon { width: 34px; height: 34px; font-size: 13px; }
+.screen .stat-info h3 { font-size: 15px; }
+.screen .btn { font-size: 12px; min-height: 40px; }
+.screen .btn-lg { min-height: 44px; font-size: 13px; }
+.screen .card-header, .screen .action-header { padding: 12px 14px; }
+.screen .card-body, .screen .action-body { padding: 12px 14px; }
+.screen .bottom-nav { position: absolute; height: 56px; }
+.screen .bottom-nav-item { font-size: 9px; }
+.screen .bottom-nav-item i { font-size: 15px; }
+.screen .data-table tbody tr { margin-bottom: 8px; }
+.screen .data-table tbody td { padding: 6px 10px; font-size: 11px; }
+.screen .data-table tbody td::before { font-size: 9px; }
+.screen .status-badge { font-size: 9px; padding: 3px 8px; }
+
+/* The preview panes are static, so the ring is drawn at a fixed position. */
+.screen .shift-ring__progress { transition: none; }
+
+/* ---------------------------------------------------------------------------
+   Force the phone layout inside each pane.
+   Media queries answer to the *page* width, not the pane width, so on a
+   desktop monitor these 340 px panes would otherwise pick up the tablet and
+   desktop rules and fall apart. Re-stating the mobile layout here keeps each
+   preview honest about what an Android phone actually gets.
+   (Container queries would express this more cleanly, but this file has to
+   render on older Android WebViews too.)
+   --------------------------------------------------------------------------- */
+.screen .action-body {
+    display: block;
+    grid-template-columns: none;
+}
+.screen .attendance-status {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    margin-bottom: 14px;
+}
+.screen .action-buttons {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    min-width: 0;
+}
+.screen .stats-grid {
+    display: grid;
+    grid-auto-flow: column;
+    grid-template-columns: none;
+    grid-auto-columns: 52%;
+    overflow-x: auto;
+}
+.screen .bottom-nav { display: flex; }
+.screen .live-clock { display: none; }
+
+/* Stacked-record tables, as they appear below 768 px. */
+.screen .data-table,
+.screen .data-table tbody,
+.screen .data-table tr,
+.screen .data-table td { display: block; width: 100%; }
+.screen .data-table tbody tr {
+    padding: 4px;
+    background: var(--surface-sunken);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+}
+.screen .data-table tbody td {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    border-bottom: 1px solid var(--border-subtle);
+    text-align: right;
+}
+.screen .data-table tbody td:last-child { border-bottom: none; }
+.screen .data-table tbody td::before {
+    content: attr(data-label);
+    font-family: var(--font-ui);
+    font-size: 9px;
+    font-weight: var(--weight-bold);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--text-muted);
+}
+
+.choose-btn { width: 100%; max-width: 360px; margin: 0 auto; }
+
+.is-current {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--text-xs);
+    font-weight: var(--weight-bold);
+    color: var(--success);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+}
+
+.chooser-foot {
+    margin-top: var(--space-16);
+    padding-top: var(--space-8);
+    border-top: 1px solid var(--border-subtle);
+    text-align: center;
+}
+.chooser-foot p { color: var(--text-muted); font-size: var(--text-sm); max-width: 60ch; margin: 0 auto var(--space-4); }
+
+.notice {
+    position: fixed;
+    left: 50%;
+    bottom: var(--space-6);
+    transform: translate3d(-50%, 20px, 0);
+    z-index: var(--z-toast);
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-5);
+    border-radius: var(--radius-full);
+    background: var(--surface-raised);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-lg);
+    font-size: var(--text-sm);
+    font-weight: var(--weight-semi);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--dur-normal) var(--ease-standard),
+                transform var(--dur-normal) var(--ease-spring);
+}
+.notice.is-visible { opacity: 1; transform: translate3d(-50%, 0, 0); }
+.notice i { color: var(--success); }
+</style>
+</head>
+
+<body>
+<main class="chooser">
+
+    <header class="chooser-head">
+        <span class="chooser-eyebrow">Phase 1 · Pick one</span>
+        <h1>Three ways Smart Attendance could look</h1>
+        <p>Each screen below is the real dashboard, rendered by the production
+           stylesheet at 360&nbsp;px — the width of the most common Android phone.
+           Pick one and the whole app switches to it.</p>
+    </header>
+
+    <div class="concepts">
+
+        <!-- ============================ THEME 1 ============================ -->
+        <section class="concept">
+            <div class="concept-meta">
+                <div class="concept-name">Modern Light</div>
+                <p class="concept-desc">White canvas, violet accent, soft shadows.
+                   Easiest to read outdoors and the lightest to render.</p>
+                <div class="swatches">
+                    <span style="background:#FFFFFF"></span>
+                    <span style="background:#F6F6FA"></span>
+                    <span style="background:#6B4EFF"></span>
+                    <span style="background:#00B8A9"></span>
+                    <span style="background:#171726"></span>
+                </div>
+            </div>
+
+            <div class="phone">
+                <div class="screen" data-theme="light">
+                    <div class="screen-scroll">
+                        <!--[preview:screen]-->
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn btn-primary btn-lg choose-btn" data-choose="light">
+                <i class="fas fa-check"></i> Use Modern Light
+            </button>
+        </section>
+
+        <!-- ============================ THEME 2 ============================ -->
+        <section class="concept">
+            <div class="concept-meta">
+                <div class="concept-name">Premium Dark</div>
+                <p class="concept-desc">Charcoal surfaces, violet glow instead of
+                   drop shadow. Comfortable at night, kinder to OLED battery.</p>
+                <div class="swatches">
+                    <span style="background:#101019"></span>
+                    <span style="background:#1A1A2A"></span>
+                    <span style="background:#9179FF"></span>
+                    <span style="background:#5FD9D1"></span>
+                    <span style="background:#F3F3F8"></span>
+                </div>
+            </div>
+
+            <div class="phone">
+                <div class="screen" data-theme="dark">
+                    <div class="screen-scroll">
+                        <!--[preview:screen]-->
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn btn-primary btn-lg choose-btn" data-choose="dark">
+                <i class="fas fa-check"></i> Use Premium Dark
+            </button>
+        </section>
+
+        <!-- ============================ THEME 3 ============================ -->
+        <section class="concept">
+            <div class="concept-meta">
+                <div class="concept-name">Glassmorphism</div>
+                <p class="concept-desc">Frosted panels over a gradient field.
+                   The most striking of the three, and the most demanding to paint.</p>
+                <div class="swatches">
+                    <span style="background:#120B2E"></span>
+                    <span style="background:#1B0B3A"></span>
+                    <span style="background:#AE9BFF"></span>
+                    <span style="background:#5FD9D1"></span>
+                    <span style="background:#F6F2FF"></span>
+                </div>
+            </div>
+
+            <div class="phone">
+                <div class="screen" data-theme="glass">
+                    <div class="screen-scroll">
+                        <!--[preview:screen]-->
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn btn-primary btn-lg choose-btn" data-choose="glass">
+                <i class="fas fa-check"></i> Use Glassmorphism
+            </button>
+        </section>
+
+    </div>
+
+    <footer class="chooser-foot">
+        <p>Your choice is saved on this device and applied everywhere in the app.
+           You can change it again from the theme control at the bottom of the sidebar.</p>
+        <a class="btn btn-outline" href="dashboard.html">
+            <i class="fas fa-arrow-right"></i> Open the dashboard
+        </a>
+    </footer>
+</main>
+
+<div class="notice" id="notice"><i class="fas fa-check-circle"></i><span id="noticeText"></span></div>
+
+<script>
+/* ---------------------------------------------------------------------------
+   One screen template, stamped into all three panes. Writing it once is the
+   point: any difference between the previews is a difference of theme alone,
+   never of markup.
+   --------------------------------------------------------------------------- */
+var SCREEN = `
+<header class="top-bar">
+    <div class="welcome-text">
+        <h2>Welcome, <span>Hasim</span>!</h2>
+        <p>Thursday, 6 August 2026</p>
+    </div>
+    <div class="top-bar-right">
+        <div class="user-avatar">H</div>
+    </div>
+</header>
+
+<div class="attendance-action-card" style="margin-top:12px">
+    <div class="action-header">
+        <h3><i class="fas fa-fingerprint"></i> Today</h3>
+        <span class="today-date">6 Aug</span>
+    </div>
+    <div class="action-body">
+        <div class="shift-ring is-running">
+            <div class="shift-ring__glow"></div>
+            <svg viewBox="0 0 190 190" aria-hidden="true">
+                <circle class="shift-ring__track" cx="95" cy="95" r="76"></circle>
+                <circle class="shift-ring__progress" cx="95" cy="95" r="76"
+                        stroke-dasharray="477.5" stroke-dashoffset="167"></circle>
+            </svg>
+            <div class="shift-ring__center">
+                <span class="ring-eyebrow">On the clock</span>
+                <span class="ring-elapsed">6:12</span>
+                <span class="ring-caption">2:48 left</span>
+            </div>
+        </div>
+
+        <div class="attendance-status">
+            <div class="status-item">
+                <span class="status-label">Check in</span>
+                <span class="status-value">09:18</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">Check out</span>
+                <span class="status-value">--:--</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">Status</span>
+                <span class="status-badge present">Present</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">Location</span>
+                <span class="status-badge wfh">WFH</span>
+            </div>
+        </div>
+
+        <div class="action-buttons">
+            <button class="btn btn-danger btn-lg"><i class="fas fa-sign-out-alt"></i> Check out</button>
+        </div>
+    </div>
+</div>
+
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-icon purple"><i class="fas fa-check-circle"></i></div>
+        <div class="stat-info"><h3>21</h3><p>Present days</p></div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon green"><i class="fas fa-clock"></i></div>
+        <div class="stat-info"><h3>178h</h3><p>Total hours</p></div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon teal"><i class="fas fa-arrow-up"></i></div>
+        <div class="stat-info"><h3>6h</h3><p>Overtime</p></div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header"><h3><i class="fas fa-history"></i> Recent</h3></div>
+    <div class="card-body">
+        <table class="data-table">
+            <tbody>
+                <tr>
+                    <td data-label="Date">5 Aug</td>
+                    <td data-label="Hours">8:45</td>
+                    <td data-label="Status"><span class="status-badge present">Present</span></td>
+                </tr>
+                <tr>
+                    <td data-label="Date">4 Aug</td>
+                    <td data-label="Hours">7:10</td>
+                    <td data-label="Status"><span class="status-badge incomplete">Short</span></td>
+                </tr>
+                <tr>
+                    <td data-label="Date">3 Aug</td>
+                    <td data-label="Hours">—</td>
+                    <td data-label="Status"><span class="status-badge week-off">Week off</span></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<nav class="bottom-nav">
+    <span class="bottom-nav-indicator" style="width:33.33%;transform:translate3d(0,0,0)"></span>
+    <button class="bottom-nav-item active"><i class="fas fa-home"></i><span>Overview</span></button>
+    <button class="bottom-nav-item"><i class="fas fa-calendar-check"></i><span>Attendance</span></button>
+    <button class="bottom-nav-item"><i class="fas fa-user"></i><span>Profile</span></button>
+</nav>
+`;
+
+document.querySelectorAll('.screen-scroll').forEach(function (host) {
+    host.innerHTML = SCREEN;
+});
+
+/* --- Choosing --------------------------------------------------------------- */
+var notice = document.getElementById('notice');
+var noticeText = document.getElementById('noticeText');
+var NAMES = { light: 'Modern Light', dark: 'Premium Dark', glass: 'Glassmorphism' };
+
+function markCurrent() {
+    var current = localStorage.getItem('sa-theme') || 'light';
+    document.querySelectorAll('[data-choose]').forEach(function (btn) {
+        var mine = btn.dataset.choose === current;
+        btn.classList.toggle('btn-primary', !mine);
+        btn.classList.toggle('btn-success', mine);
+        btn.innerHTML = mine
+            ? '<i class="fas fa-check-circle"></i> Currently in use'
+            : '<i class="fas fa-check"></i> Use ' + NAMES[btn.dataset.choose];
+    });
+}
+
+document.querySelectorAll('[data-choose]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+        var theme = btn.dataset.choose;
+        localStorage.setItem('sa-theme', theme);
+        document.documentElement.setAttribute('data-theme', theme);
+        markCurrent();
+
+        noticeText.textContent = NAMES[theme] + ' applied across the app';
+        notice.classList.add('is-visible');
+        clearTimeout(window.__noticeTimer);
+        window.__noticeTimer = setTimeout(function () {
+            notice.classList.remove('is-visible');
+        }, 2600);
+    });
+});
+
+/* Apply whatever was already chosen, to the page chrome only — the three
+   panes always show their own theme regardless. */
+(function () {
+    var saved = localStorage.getItem('sa-theme');
+    if (['light', 'dark', 'glass'].indexOf(saved) > -1) {
+        document.documentElement.setAttribute('data-theme', saved);
+    }
+    markCurrent();
+})();
+</script>
+</body>
+</html>
