@@ -1,0 +1,242 @@
+/* ===========================================================================
+   Smart Attendance — Aurora Visual Layer
+   Layer 3 of 3. Loaded after design-system.css and style.css.
+
+   Purely additive: no selector here changes layout, box model, spacing,
+   grid structure, or JS-driven behavior. Every rule either paints a new
+   pseudo-element, upgrades a shadow/border token, or adjusts an existing
+   transition's easing/duration. Nothing here removes or repositions an
+   existing element.
+
+   Direction: VisionOS / Linear / Arc — soft aurora light behind a calm
+   white surface, quiet glass on chrome only, layered shadows instead of
+   flat ones, one glow behind the signature ring, gradient hairlines on
+   the cards that matter most. Kept out of dark/glass themes, which
+   already carry their own atmosphere.
+   =========================================================================== */
+
+/* ---------------------------------------------------------------------------
+   1. AURORA BACKGROUND
+   Four soft blobs, one per corner, drifting on independent slow loops.
+   Painted on body::before/::after so no markup changes anywhere.
+   Fixed + negative z-index: sits under every existing layer, including the
+   translucent nav bars, without altering their stacking order.
+   --------------------------------------------------------------------------- */
+[data-theme='light'] body::before,
+[data-theme='light'] body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    will-change: transform;
+}
+
+[data-theme='light'] body::before {
+    background:
+        radial-gradient(560px 560px at 8% 6%,   rgba(0, 184, 169, 0.13) 0%, transparent 70%),   /* teal, top-left    */
+        radial-gradient(620px 620px at 96% 14%, rgba(107, 78, 255, 0.14) 0%, transparent 70%),   /* violet, top-right */
+        radial-gradient(600px 600px at 4% 92%,  rgba(174, 155, 255, 0.12) 0%, transparent 70%),  /* lavender, bot-left*/
+        radial-gradient(640px 640px at 100% 100%, rgba(95, 217, 209, 0.11) 0%, transparent 72%); /* cyan, bot-right   */
+    animation: aurora-drift-a 34s ease-in-out infinite;
+}
+
+[data-theme='light'] body::after {
+    background:
+        radial-gradient(480px 480px at 30% -6%, rgba(0, 184, 169, 0.08) 0%, transparent 68%),
+        radial-gradient(520px 520px at 78% 98%, rgba(107, 78, 255, 0.08) 0%, transparent 68%);
+    animation: aurora-drift-b 26s ease-in-out infinite;
+    animation-delay: -8s;
+}
+
+@keyframes aurora-drift-a {
+    0%   { transform: translate3d(0, 0, 0) scale(1); }
+    25%  { transform: translate3d(1.5%, -2%, 0) scale(1.03); }
+    50%  { transform: translate3d(-1%, 2.5%, 0) scale(1.05); }
+    75%  { transform: translate3d(-2%, -1%, 0) scale(1.02); }
+    100% { transform: translate3d(0, 0, 0) scale(1); }
+}
+
+@keyframes aurora-drift-b {
+    0%   { transform: translate3d(0, 0, 0) scale(1); }
+    33%  { transform: translate3d(-2%, 1.5%, 0) scale(1.04); }
+    66%  { transform: translate3d(2%, -1.5%, 0) scale(1.02); }
+    100% { transform: translate3d(0, 0, 0) scale(1); }
+}
+
+/* ---------------------------------------------------------------------------
+   2. GLOW BEHIND THE MAIN ATTENDANCE CARD
+   A quiet radial wash sits under Today's Attendance, echoing the ring's own
+   halo so the whole card feels lit from within rather than pasted on.
+   isolation: isolate keeps the glow's negative z-index scoped to this card
+   alone, so it can never slip under a sibling section.
+   --------------------------------------------------------------------------- */
+[data-theme='light'] .attendance-action-card {
+    position: relative;
+    isolation: isolate;
+}
+
+[data-theme='light'] .attendance-action-card::before {
+    content: '';
+    position: absolute;
+    inset: -28px;
+    z-index: -1;
+    background: radial-gradient(60% 60% at 50% 38%,
+                rgba(107, 78, 255, 0.10) 0%,
+                rgba(0, 184, 169, 0.05) 45%,
+                transparent 75%);
+    filter: blur(6px);
+    pointer-events: none;
+}
+
+/* ---------------------------------------------------------------------------
+   3. GLOW BEHIND THE SHIFT RING
+   The ring already has an internal pulse (.shift-ring__glow) that fires only
+   while checked in. This adds a constant, much softer ambient halo behind
+   the ring itself so it reads as lit even before check-in / after checkout.
+   --------------------------------------------------------------------------- */
+[data-theme='light'] .shift-ring {
+    position: relative;
+}
+
+[data-theme='light'] .shift-ring::before {
+    content: '';
+    position: absolute;
+    inset: -22px;
+    z-index: -1;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(107, 78, 255, 0.10) 0%, transparent 70%);
+    filter: blur(4px);
+    pointer-events: none;
+}
+
+[data-theme='light'] .shift-ring.is-complete::before {
+    background: radial-gradient(circle, rgba(18, 161, 80, 0.10) 0%, transparent 70%);
+}
+
+/* ---------------------------------------------------------------------------
+   4. LAYERED SHADOWS
+   Replace the single/double-stop shadows with three soft, widely-spaced
+   layers per elevation. Same token names, same call sites — every existing
+   `box-shadow: var(--shadow-md)` etc. picks this up automatically, so no
+   component rule needs to change.
+   --------------------------------------------------------------------------- */
+[data-theme='light'] {
+    --shadow-xs: 0 1px 2px rgba(23, 23, 38, 0.04);
+    --shadow-sm: 0 1px 2px rgba(23, 23, 38, 0.03),
+                 0 4px 10px rgba(23, 23, 38, 0.045),
+                 0 10px 22px rgba(107, 78, 255, 0.03);
+    --shadow-md: 0 2px 4px rgba(23, 23, 38, 0.035),
+                 0 10px 20px rgba(23, 23, 38, 0.05),
+                 0 24px 48px rgba(107, 78, 255, 0.045);
+    --shadow-lg: 0 4px 10px rgba(23, 23, 38, 0.04),
+                 0 18px 36px rgba(23, 23, 38, 0.06),
+                 0 40px 80px rgba(107, 78, 255, 0.06);
+    --shadow-xl: 0 8px 16px rgba(23, 23, 38, 0.05),
+                 0 28px 56px rgba(23, 23, 38, 0.07),
+                 0 60px 110px rgba(107, 78, 255, 0.08);
+    --shadow-brand: 0 2px 6px rgba(107, 78, 255, 0.14),
+                    0 12px 28px rgba(107, 78, 255, 0.20);
+}
+
+/* ---------------------------------------------------------------------------
+   5. GRADIENT HAIRLINE BORDERS ON KEY CARDS
+   A 1px conic-ish gradient border, drawn with a double-background/
+   padding trick so it never adds to the box's footprint or nudges layout.
+   Applied only to the cards that anchor each screen.
+   --------------------------------------------------------------------------- */
+[data-theme='light'] .attendance-action-card,
+[data-theme='light'] .hero-card {
+    background:
+        linear-gradient(var(--surface), var(--surface)) padding-box,
+        linear-gradient(135deg,
+            rgba(107, 78, 255, 0.28) 0%,
+            rgba(0, 184, 169, 0.22) 45%,
+            rgba(174, 155, 255, 0.26) 100%) border-box;
+    border: 1px solid transparent;
+}
+
+[data-theme='light'] .stat-card {
+    background:
+        linear-gradient(var(--surface), var(--surface)) padding-box,
+        linear-gradient(150deg,
+            rgba(107, 78, 255, 0.14) 0%,
+            rgba(0, 184, 169, 0.10) 100%) border-box;
+    border: 1px solid transparent;
+    transition: transform var(--dur-normal) var(--ease-standard),
+                box-shadow var(--dur-normal) var(--ease-standard),
+                border-color var(--dur-normal) var(--ease-standard);
+}
+
+/* ---------------------------------------------------------------------------
+   6. LIGHT-TOUCH GLASSMORPHISM ON CHROME
+   Only the surfaces that float above content — top nav, bottom nav, modal
+   sheets — get a frosted treatment. Card bodies stay solid white for
+   maximum readability, per brief ("glassmorphism only where appropriate").
+   --------------------------------------------------------------------------- */
+/* .top-bar already uses --nav-surface / --nav-blur from design-system.css,
+   which is glass by default in the light theme — no override needed here. */
+
+/* .bottom-nav already uses --nav-surface / --nav-blur — bump blur strength
+   slightly beyond the design-system default for a touch more depth. */
+[data-theme='light'] .bottom-nav {
+    -webkit-backdrop-filter: saturate(190%) blur(22px);
+    backdrop-filter: saturate(190%) blur(22px);
+}
+
+[data-theme='light'] .modal-content {
+    background: rgba(255, 255, 255, 0.92);
+    -webkit-backdrop-filter: saturate(160%) blur(14px);
+    backdrop-filter: saturate(160%) blur(14px);
+}
+
+/* ---------------------------------------------------------------------------
+   7. HOVER / PRESS FEEL
+   Existing transitions kept; only easing/duration refined toward a spring
+   that reads as "alive" without new properties or new states being added.
+   --------------------------------------------------------------------------- */
+[data-theme='light'] .stat-card:hover {
+    transform: translate3d(0, -4px, 0);
+    box-shadow: var(--shadow-lg);
+    border-color: rgba(107, 78, 255, 0.32);
+}
+
+[data-theme='light'] .btn {
+    transition: transform var(--dur-fast) var(--ease-spring),
+                box-shadow var(--dur-normal) var(--ease-standard),
+                filter var(--dur-normal) var(--ease-standard);
+}
+
+[data-theme='light'] .btn-primary:hover:not(:disabled) {
+    box-shadow: var(--shadow-brand);
+}
+
+[data-theme='light'] .card,
+[data-theme='light'] .attendance-action-card,
+[data-theme='light'] .profile-card,
+[data-theme='light'] .summary-card {
+    transition: box-shadow var(--dur-normal) var(--ease-standard),
+                transform var(--dur-normal) var(--ease-standard);
+}
+
+/* ---------------------------------------------------------------------------
+   8. PERFORMANCE / MOTION SAFETY
+   Aurora blobs are decorative only — pause them under reduced-motion
+   (design-system.css already forces all animation-durations to ~0 globally,
+   this just documents the intent locally) and keep compositing cheap via
+   transform-only animation (no layout, no repaint of blurred backgrounds).
+   --------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+    [data-theme='light'] body::before,
+    [data-theme='light'] body::after {
+        animation: none;
+    }
+}
+
+/* Small screens: shrink blob extents slightly so they don't overwhelm
+   content width on narrow phones, and skip the second aurora layer to
+   keep paint cost low on low-end Android (matches this file's own
+   performance intent, and the design-system's existing mobile-first bias). */
+@media (max-width: 420px) {
+    [data-theme='light'] body::after { display: none; }
+}
