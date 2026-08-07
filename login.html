@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Login - Smart Attendance</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/png" sizes="192x192" href="images/icon-192.png">
+    <link rel="apple-touch-icon" href="images/icon-192.png">
+    <meta name="theme-color" content="#FFFFFF">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap">
+    <link rel="stylesheet" href="css/design-system.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" onload="this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
+    <script>
+    /* Theme boot. Runs before first paint so there is never a flash of the
+       wrong theme, which on a dark-theme phone is the difference between
+       polished and broken. */
+    (function () {
+        try {
+            var t = localStorage.getItem('sa-theme');
+            if (['light', 'dark', 'glass'].indexOf(t) === -1) t = 'light';
+            document.documentElement.setAttribute('data-theme', t);
+            var m = document.querySelector('meta[name="theme-color"]');
+            if (m) m.setAttribute('content', t === 'light' ? '#FFFFFF' : t === 'dark' ? '#101019' : '#120B2E');
+        } catch (e) {
+            document.documentElement.setAttribute('data-theme', 'light');
+        }
+    })();
+    </script>
+</head>
+<body class="light-mode">
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+    </div>
+
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="auth-header">
+                <a href="index.html" class="auth-logo">
+                    <i class="fas fa-clock"></i>
+                    <span>Smart Attendance</span>
+                </a>
+                <h1>Welcome Back</h1>
+                <p>Sign in to continue to your dashboard</p>
+            </div>
+
+            <form id="loginForm" class="auth-form">
+                <div class="form-group">
+                    <label for="email">
+                        <i class="fas fa-envelope"></i> Email Address
+                    </label>
+                    <input type="email" id="email" name="email" required 
+                           placeholder="Enter your email">
+                </div>
+
+                <div class="form-group">
+                    <label for="password">
+                        <i class="fas fa-lock"></i> Password
+                    </label>
+                    <div class="password-input">
+                        <input type="password" id="password" name="password" required 
+                               placeholder="Enter your password">
+                        <button type="button" class="password-toggle" id="passwordToggle">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="form-options">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="rememberMe">
+                        <span>Remember me</span>
+                    </label>
+                    <a href="forgot-password.html" class="forgot-link">Forgot Password?</a>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block">
+                    <i class="fas fa-sign-in-alt"></i> Sign In
+                </button>
+            </form>
+
+            <div class="auth-footer">
+                <p>Don't have an account? <a href="register.html">Create Account</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script type="module" src="js/firebase.js"></script>
+    <script type="module" src="js/auth.js"></script>
+    <script type="module">
+        // Wait for Firebase to initialize from js/firebase.js
+        const waitForFirebase = () => {
+            return new Promise((resolve) => {
+                const check = () => {
+                    if (window.firebaseAuth && window.firebaseDb) {
+                        resolve();
+                    } else {
+                        setTimeout(check, 50);
+                    }
+                };
+                check();
+            });
+        };
+
+        waitForFirebase().then(() => {
+            const auth = window.firebaseAuth;
+            const db = window.firebaseDb;
+
+            // Password toggle
+            document.getElementById('passwordToggle').addEventListener('click', () => {
+                const input = document.getElementById('password');
+                input.type = input.type === 'password' ? 'text' : 'password';
+                const icon = document.getElementById('passwordToggle').querySelector('i');
+                icon.classList.toggle('fa-eye');
+                icon.classList.toggle('fa-eye-slash');
+            });
+
+            // Login form
+            document.getElementById('loginForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+                document.getElementById('loadingOverlay').style.display = 'flex';
+                try {
+                    await window.signInWithEmailAndPassword(auth, email, password);
+                } catch (error) {
+                    document.getElementById('loadingOverlay').style.display = 'none';
+                    const msgs = {
+                        'auth/invalid-credential': 'Invalid email or password.',
+                        'auth/user-not-found': 'No account found with this email.',
+                        'auth/wrong-password': 'Incorrect password.',
+                        'auth/too-many-requests': 'Too many attempts. Try again later.'
+                    };
+                    alert(msgs[error.code] || 'Login failed. Please try again.');
+                }
+            });
+
+            // Auth state — redirect if logged in, else hide loader
+            window.onAuthStateChanged(auth, async (user) => {
+                if (user) {
+                    try {
+                        const userDoc = await window.getDoc(window.doc(db, 'users', user.uid));
+                        if (userDoc.exists()) {
+                            const role = userDoc.data().role;
+                            window.location.href = role === 'admin' ? 'admin.html' : 'dashboard.html';
+                            return;
+                        }
+                    } catch(e) {
+                        console.error('Error fetching user data:', e);
+                    }
+                }
+                document.getElementById('loadingOverlay').style.display = 'none';
+            });
+        });
+    </script>
+
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js').catch((err) => {
+                    console.error('Service worker registration failed:', err);
+                });
+            });
+        }
+    </script>
+    <!-- GSAP is optional: ui.js orchestrates with it when present and falls
+         back to CSS keyframes when it is blocked or offline. -->
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script defer src="js/ui.js"></script>
+</body>
+</html>
