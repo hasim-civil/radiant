@@ -4,6 +4,25 @@
  */
 
 // ===================================
+// Late Arrival Configuration
+// ===================================
+
+// Check-ins at or after this time are considered "late".
+const LATE_CUTOFF_HOUR = 11;
+const LATE_CUTOFF_MIN = 1; // 11:01 AM
+
+/**
+ * Determine whether a given check-in Date counts as a late arrival.
+ * Cutoff: 11:01 AM or later is late; before that is on time.
+ */
+function isLateCheckIn(checkInDate) {
+    if (!checkInDate) return false;
+    const h = checkInDate.getHours();
+    const m = checkInDate.getMinutes();
+    return (h > LATE_CUTOFF_HOUR) || (h === LATE_CUTOFF_HOUR && m >= LATE_CUTOFF_MIN);
+}
+
+// ===================================
 // Dashboard Initialization
 // ===================================
 
@@ -436,7 +455,8 @@ async function savePastAttendance() {
             totalHours: totalHours,
             status: 'present',
             date: selectedDate,
-            workLocation: document.getElementById('pastWorkLocation')?.value || 'office'
+            workLocation: document.getElementById('pastWorkLocation')?.value || 'office',
+            isLate: isLateCheckIn(checkInDate)
         });
 
         hideLoading();
@@ -589,7 +609,8 @@ async function saveEditedTime() {
         const updateData = {
             checkIn: Timestamp.fromDate(newCheckIn),
             date: today,
-            workLocation: document.getElementById('editWorkLocation')?.value || 'office'
+            workLocation: document.getElementById('editWorkLocation')?.value || 'office',
+            isLate: isLateCheckIn(newCheckIn)
         };
         if (newCheckOut) {
             updateData.checkOut = Timestamp.fromDate(newCheckOut);
@@ -673,7 +694,8 @@ async function handleCheckIn() {
             totalHours: null,
             status: 'incomplete',
             date: today,
-            workLocation: 'office'
+            workLocation: 'office',
+            isLate: isLateCheckIn(now)
         });
         
         hideLoading();
@@ -894,6 +916,7 @@ async function loadAttendanceStats() {
         let totalDays = 0;
         let totalHours = 0;
         let presentDays = 0;
+        let lateDays = 0;
         
         snapshot.forEach(doc => {
             const data = doc.data();
@@ -901,6 +924,9 @@ async function loadAttendanceStats() {
             if (data.status === 'present') {
                 presentDays++;
                 totalHours += data.totalHours || 0;
+            }
+            if (data.isLate) {
+                lateDays++;
             }
         });
         
@@ -921,11 +947,13 @@ async function loadAttendanceStats() {
 
         // Update UI
         document.getElementById('totalDays').textContent = totalDays;
-        document.getElementById('totalHours').textContent = formatHoursMinutes(totalHours);
+        document.getElementById('totalHours')?.setAttribute('data-value', formatHoursMinutes(totalHours)); // card removed from UI; value retained for avgHours calc
         document.getElementById('presentDays').textContent = presentDays;
         document.getElementById('avgHours').textContent = formatHoursMinutes(avgHours);
         document.getElementById('lessHours').textContent = formatHoursMinutes(totalLess);
         document.getElementById('overtimeHours').textContent = formatHoursMinutes(totalOvertime);
+        const lateDaysEl = document.getElementById('lateDays');
+        if (lateDaysEl) lateDaysEl.textContent = lateDays;
         
     } catch (error) {
         console.error('Error loading stats:', error);
