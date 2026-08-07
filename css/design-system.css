@@ -1,0 +1,549 @@
+/* ===========================================================================
+   Smart Attendance — Design System
+   Layer 1 of 2. Tokens, primitives, themes, motion vocabulary.
+   Loaded before style.css. Nothing here targets a component directly.
+   =========================================================================== */
+
+/* ---------------------------------------------------------------------------
+   1. PRIMITIVES
+   Raw values. Never used directly by components — themes map them to roles.
+   --------------------------------------------------------------------------- */
+:root {
+    /* Brand — electric indigo-violet. Identity, primary actions, focus. */
+    --violet-50:  #F2EFFF;
+    --violet-100: #E5DEFF;
+    --violet-200: #CBBDFF;
+    --violet-300: #AE9BFF;
+    --violet-400: #9179FF;
+    --violet-500: #6B4EFF;
+    --violet-600: #5836E8;
+    --violet-700: #4529BC;
+    --violet-800: #331E8C;
+    --violet-900: #221359;
+
+    /* Accent — teal. Reserved for time, progress and elapsed duration. */
+    --teal-100: #CCF3F0;
+    --teal-300: #5FD9D1;
+    --teal-500: #00B8A9;
+    --teal-700: #008073;
+
+    /* Semantics — one hue per attendance state, never reused decoratively. */
+    --green-100: #D4F4E2; --green-500: #12A150; --green-700: #0B7A3B;
+    --red-100:   #FDE0E1; --red-500:   #E5484D; --red-700:   #B4272B;
+    --amber-100: #FDEFD0; --amber-500: #F5A524; --amber-700: #B87614;
+    --blue-100:  #DCE8FF; --blue-500:  #3E7BFA; --blue-700:  #2557C7;
+
+    /* Neutrals — slightly cool, so violet never reads as muddy against them. */
+    --neutral-0:   #FFFFFF;
+    --neutral-25:  #FBFBFD;
+    --neutral-50:  #F6F6FA;
+    --neutral-100: #EDEDF4;
+    --neutral-200: #DFDFEA;
+    --neutral-300: #C4C4D6;
+    --neutral-400: #9A9AB0;
+    --neutral-500: #71718A;
+    --neutral-600: #52526B;
+    --neutral-700: #3A3A50;
+    --neutral-800: #26263A;
+    --neutral-850: #1E1E30;
+    --neutral-900: #171726;
+    --neutral-950: #101019;
+
+    /* ---- Typography ---------------------------------------------------- */
+    /* Plus Jakarta Sans carries the interface. IBM Plex Mono carries every
+       number, because a time clock should read like an instrument, and
+       tabular figures stop the live clock from jittering as it ticks.      */
+    --font-ui: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont,
+               'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    --font-data: 'IBM Plex Mono', ui-monospace, 'SF Mono', 'Roboto Mono',
+                 Menlo, Consolas, monospace;
+
+    /* Type scale — 1.200 minor third, mobile-first, fluid at the top end. */
+    --text-2xs: 0.6875rem;  /* 11px — table meta, tick labels           */
+    --text-xs:  0.75rem;    /* 12px — captions, badges                  */
+    --text-sm:  0.8125rem;  /* 13px — secondary body, table cells       */
+    --text-base:0.9375rem;  /* 15px — body. 15 not 16: denser on Android */
+    --text-md:  1.0625rem;  /* 17px — card titles                       */
+    --text-lg:  1.25rem;    /* 20px — section headings                  */
+    --text-xl:  clamp(1.5rem, 1.2rem + 1.4vw, 1.875rem);
+    --text-2xl: clamp(1.875rem, 1.4rem + 2.2vw, 2.5rem);
+    --text-3xl: clamp(2.25rem, 1.5rem + 3.4vw, 3.5rem);
+
+    --weight-normal: 400;
+    --weight-medium: 500;
+    --weight-semi:   600;
+    --weight-bold:   700;
+    --weight-black:  800;
+
+    --leading-tight: 1.18;
+    --leading-snug:  1.35;
+    --leading-body:  1.6;
+
+    --tracking-tight: -0.022em;   /* display sizes only */
+    --tracking-flat:  -0.008em;
+    --tracking-wide:  0.06em;     /* eyebrows, badge caps */
+
+    /* ---- Spacing — 4px base ------------------------------------------- */
+    --space-0:  0;
+    --space-1:  0.25rem;
+    --space-2:  0.5rem;
+    --space-3:  0.75rem;
+    --space-4:  1rem;
+    --space-5:  1.25rem;
+    --space-6:  1.5rem;
+    --space-8:  2rem;
+    --space-10: 2.5rem;
+    --space-12: 3rem;
+    --space-16: 4rem;
+    --space-20: 5rem;
+
+    /* Legacy aliases — the original stylesheet's names, kept so any inline
+       style or third-party snippet referencing them keeps resolving.      */
+    --spacing-xs: var(--space-1);
+    --spacing-sm: var(--space-2);
+    --spacing-md: var(--space-4);
+    --spacing-lg: var(--space-6);
+    --spacing-xl: var(--space-8);
+
+    /* ---- Radius -------------------------------------------------------- */
+    --radius-xs:   6px;
+    --radius-sm:   10px;
+    --radius-md:   14px;
+    --radius-lg:   18px;
+    --radius-xl:   24px;
+    --radius-2xl:  32px;
+    --radius-full: 9999px;
+
+    /* ---- Layout --------------------------------------------------------- */
+    --sidebar-w:          268px;
+    --sidebar-w-collapsed: 76px;
+    --bottomnav-h:        64px;
+    --topbar-h:           60px;
+    --content-max:        1440px;
+    --tap-min:            44px;   /* never let an interactive target go below */
+
+    /* ---- Motion ---------------------------------------------------------
+       Two curves only. `standard` for anything entering or moving in place,
+       `spring` for anything the finger just touched.                      */
+    --ease-standard: cubic-bezier(0.22, 0.61, 0.36, 1);
+    --ease-spring:   cubic-bezier(0.34, 1.56, 0.64, 1);
+    --ease-exit:     cubic-bezier(0.4, 0, 1, 1);
+
+    --dur-instant: 90ms;
+    --dur-fast:    160ms;
+    --dur-normal:  260ms;
+    --dur-slow:    420ms;
+    --dur-page:    520ms;
+
+    /* Legacy transition aliases */
+    --transition-fast:   var(--dur-fast) var(--ease-standard);
+    --transition-normal: var(--dur-normal) var(--ease-standard);
+    --transition-slow:   var(--dur-slow) var(--ease-standard);
+
+    --z-base: 1;
+    --z-sticky: 100;
+    --z-sidebar: 200;
+    --z-bottomnav: 250;
+    --z-modal: 400;
+    --z-toast: 500;
+    --z-overlay: 600;
+}
+
+/* ---------------------------------------------------------------------------
+   2. THEMES
+   Each theme remaps the same role tokens. Components never branch on theme.
+   --------------------------------------------------------------------------- */
+
+/* ---- Theme 1 · Modern Light -----------------------------------------------
+   White canvas, violet accent, soft diffuse shadows, generous radius.
+   The default: cheapest to paint, best battery and scroll on mid-range
+   Android, highest legibility in daylight.                                  */
+[data-theme='light'] {
+    --canvas:        var(--neutral-50);
+    --canvas-image:  radial-gradient(1100px 620px at 82% -12%, #EFEBFF 0%, transparent 62%),
+                     radial-gradient(880px 520px at -8% 8%, #E7F6F5 0%, transparent 58%);
+    --canvas-attach: fixed;
+
+    --surface:       var(--neutral-0);
+    --surface-raised:var(--neutral-0);
+    --surface-sunken:var(--neutral-100);
+    --surface-hover: var(--neutral-50);
+    --surface-blur:  none;
+
+    --nav-surface:   rgba(255, 255, 255, 0.88);
+    --nav-blur:      saturate(180%) blur(20px);
+
+    --text-primary:   var(--neutral-900);
+    --text-secondary: var(--neutral-600);
+    --text-muted:     var(--neutral-400);
+    --text-inverse:   var(--neutral-0);
+    --text-on-brand:  #FFFFFF;
+
+    --border:        var(--neutral-200);
+    --border-strong: var(--neutral-300);
+    --border-subtle: var(--neutral-100);
+
+    --brand:         var(--violet-500);
+    --brand-hover:   var(--violet-600);
+    --brand-active:  var(--violet-700);
+    --brand-subtle:  var(--violet-50);
+    --brand-border:  var(--violet-200);
+    --brand-text:    var(--violet-600);
+
+    --accent:        var(--teal-500);
+    --accent-subtle: var(--teal-100);
+
+    --success: var(--green-500); --success-subtle: var(--green-100); --success-text: var(--green-700);
+    --danger:  var(--red-500);   --danger-subtle:  var(--red-100);   --danger-text:  var(--red-700);
+    --warning: var(--amber-500); --warning-subtle: var(--amber-100); --warning-text: var(--amber-700);
+    --info:    var(--blue-500);  --info-subtle:    var(--blue-100);  --info-text:    var(--blue-700);
+
+    --input-bg:      var(--neutral-0);
+    --input-border:  var(--neutral-200);
+    --input-focus-ring: rgba(107, 78, 255, 0.16);
+
+    --shadow-xs: 0 1px 2px rgba(23, 23, 38, 0.05);
+    --shadow-sm: 0 2px 6px rgba(23, 23, 38, 0.06), 0 1px 2px rgba(23, 23, 38, 0.04);
+    --shadow-md: 0 8px 24px rgba(23, 23, 38, 0.07), 0 2px 6px rgba(23, 23, 38, 0.04);
+    --shadow-lg: 0 18px 48px rgba(23, 23, 38, 0.10), 0 4px 12px rgba(23, 23, 38, 0.05);
+    --shadow-xl: 0 30px 70px rgba(23, 23, 38, 0.14);
+    --shadow-brand: 0 8px 22px rgba(107, 78, 255, 0.26);
+
+    --ring-track: var(--neutral-100);
+    --skeleton-base:  var(--neutral-100);
+    --skeleton-sheen: rgba(255, 255, 255, 0.85);
+    --scrim: rgba(23, 23, 38, 0.42);
+    color-scheme: light;
+}
+
+/* ---- Theme 2 · Premium Dark -----------------------------------------------
+   Charcoal, not black — #1E1E30 keeps OLED smear down while staying warm.
+   Elevation is carried by borders and a violet glow, not by drop shadow,
+   because shadows are invisible on dark and glow reads as premium.         */
+[data-theme='dark'] {
+    --canvas:        var(--neutral-950);
+    --canvas-image:  radial-gradient(1000px 560px at 78% -14%, rgba(88, 54, 232, 0.20) 0%, transparent 62%),
+                     radial-gradient(760px 480px at -6% 6%, rgba(0, 184, 169, 0.10) 0%, transparent 58%);
+    --canvas-attach: fixed;
+
+    --surface:       #1A1A2A;
+    --surface-raised:#212134;
+    --surface-sunken:#141422;
+    --surface-hover: #262639;
+    --surface-blur:  none;
+
+    --nav-surface:   rgba(20, 20, 34, 0.86);
+    --nav-blur:      saturate(160%) blur(20px);
+
+    --text-primary:   #F3F3F8;
+    --text-secondary: #A9A9C0;
+    --text-muted:     #6E6E8A;
+    --text-inverse:   var(--neutral-900);
+    --text-on-brand:  #FFFFFF;
+
+    --border:        rgba(255, 255, 255, 0.09);
+    --border-strong: rgba(255, 255, 255, 0.17);
+    --border-subtle: rgba(255, 255, 255, 0.05);
+
+    --brand:         var(--violet-400);
+    --brand-hover:   var(--violet-300);
+    --brand-active:  var(--violet-200);
+    --brand-subtle:  rgba(107, 78, 255, 0.16);
+    --brand-border:  rgba(145, 121, 255, 0.34);
+    --brand-text:    var(--violet-300);
+
+    --accent:        var(--teal-300);
+    --accent-subtle: rgba(0, 184, 169, 0.15);
+
+    --success: #3CCB7F; --success-subtle: rgba(18, 161, 80, 0.18);  --success-text: #6EE7A6;
+    --danger:  #FF6369; --danger-subtle:  rgba(229, 72, 77, 0.18);  --danger-text:  #FF9095;
+    --warning: #FFC53D; --warning-subtle: rgba(245, 165, 36, 0.16); --warning-text: #FFD772;
+    --info:    #6E9BFF; --info-subtle:    rgba(62, 123, 250, 0.18); --info-text:    #9DBBFF;
+
+    --input-bg:      #14142244;
+    --input-border:  rgba(255, 255, 255, 0.12);
+    --input-focus-ring: rgba(145, 121, 255, 0.24);
+
+    --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.4);
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.45);
+    --shadow-md: 0 10px 28px rgba(0, 0, 0, 0.5);
+    --shadow-lg: 0 20px 52px rgba(0, 0, 0, 0.58);
+    --shadow-xl: 0 32px 76px rgba(0, 0, 0, 0.66);
+    --shadow-brand: 0 8px 26px rgba(107, 78, 255, 0.42);
+
+    --ring-track: rgba(255, 255, 255, 0.08);
+    --skeleton-base:  rgba(255, 255, 255, 0.06);
+    --skeleton-sheen: rgba(255, 255, 255, 0.14);
+    --scrim: rgba(6, 6, 14, 0.66);
+    color-scheme: dark;
+}
+
+/* ---- Theme 3 · Glassmorphism ----------------------------------------------
+   Frosted panels over a moving gradient field. Highest visual drama,
+   highest paint cost — every blurred surface is a separate compositor
+   layer, so the surface count is deliberately kept low.                    */
+[data-theme='glass'] {
+    --canvas:        #120B2E;
+    --canvas-image:  radial-gradient(760px 520px at 12% 8%,  rgba(124, 58, 237, 0.55) 0%, transparent 60%),
+                     radial-gradient(680px 480px at 88% 22%, rgba(0, 184, 169, 0.30) 0%, transparent 58%),
+                     radial-gradient(720px 600px at 62% 92%, rgba(214, 51, 173, 0.28) 0%, transparent 62%),
+                     linear-gradient(155deg, #1B0B3A 0%, #120B2E 45%, #0C1030 100%);
+    --canvas-attach: fixed;
+
+    --surface:       rgba(255, 255, 255, 0.07);
+    --surface-raised:rgba(255, 255, 255, 0.11);
+    --surface-sunken:rgba(10, 6, 26, 0.34);
+    --surface-hover: rgba(255, 255, 255, 0.14);
+    --surface-blur:  saturate(170%) blur(18px);
+
+    --nav-surface:   rgba(22, 13, 48, 0.80);
+    --nav-blur:      saturate(180%) blur(26px);
+
+    --text-primary:   #F6F2FF;
+    --text-secondary: #C6BCE8;
+    --text-muted:     #8E84B8;
+    --text-inverse:   #171726;
+    --text-on-brand:  #FFFFFF;
+
+    --border:        rgba(255, 255, 255, 0.14);
+    --border-strong: rgba(255, 255, 255, 0.26);
+    --border-subtle: rgba(255, 255, 255, 0.08);
+
+    --brand:         var(--violet-300);
+    --brand-hover:   var(--violet-200);
+    --brand-active:  var(--violet-100);
+    --brand-subtle:  rgba(145, 121, 255, 0.20);
+    --brand-border:  rgba(174, 155, 255, 0.40);
+    --brand-text:    var(--violet-200);
+
+    --accent:        var(--teal-300);
+    --accent-subtle: rgba(95, 217, 209, 0.18);
+
+    --success: #4ADE80; --success-subtle: rgba(74, 222, 128, 0.18);  --success-text: #86EFAC;
+    --danger:  #FF7A7F; --danger-subtle:  rgba(255, 122, 127, 0.18); --danger-text:  #FFA8AC;
+    --warning: #FFD166; --warning-subtle: rgba(255, 209, 102, 0.18); --warning-text: #FFE29A;
+    --info:    #7FA9FF; --info-subtle:    rgba(127, 169, 255, 0.18); --info-text:    #A9C4FF;
+
+    --input-bg:      rgba(255, 255, 255, 0.08);
+    --input-border:  rgba(255, 255, 255, 0.18);
+    --input-focus-ring: rgba(174, 155, 255, 0.28);
+
+    --shadow-xs: 0 1px 2px rgba(8, 4, 24, 0.3);
+    --shadow-sm: 0 4px 14px rgba(8, 4, 24, 0.34);
+    --shadow-md: 0 12px 34px rgba(8, 4, 24, 0.42);
+    --shadow-lg: 0 24px 60px rgba(8, 4, 24, 0.52);
+    --shadow-xl: 0 36px 84px rgba(8, 4, 24, 0.60);
+    --shadow-brand: 0 10px 30px rgba(107, 78, 255, 0.40);
+
+    --ring-track: rgba(255, 255, 255, 0.10);
+    --skeleton-base:  rgba(255, 255, 255, 0.07);
+    --skeleton-sheen: rgba(255, 255, 255, 0.18);
+    --scrim: rgba(9, 5, 26, 0.62);
+    color-scheme: dark;
+}
+
+/* Fallback: if no theme attribute is present, behave as Modern Light. */
+html:not([data-theme]) { color-scheme: light; }
+
+/* ---------------------------------------------------------------------------
+   3. RESET
+   --------------------------------------------------------------------------- */
+*, *::before, *::after { box-sizing: border-box; }
+
+* { margin: 0; padding: 0; }
+
+html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    scroll-behavior: smooth;
+    overflow-x: hidden;
+    /* Keeps the canvas gradient behind the Android system nav bar. */
+    background: var(--canvas);
+}
+
+body {
+    font-family: var(--font-ui);
+    font-size: var(--text-base);
+    font-weight: var(--weight-normal);
+    line-height: var(--leading-body);
+    letter-spacing: var(--tracking-flat);
+    color: var(--text-primary);
+    background-color: var(--canvas);
+    background-image: var(--canvas-image);
+    background-attachment: var(--canvas-attach);
+    background-repeat: no-repeat;
+    min-height: 100vh;
+    min-height: 100dvh;
+    overflow-x: hidden;
+    overflow-wrap: break-word;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    /* Kills the grey flash Chrome for Android paints on every tap. */
+    -webkit-tap-highlight-color: transparent;
+}
+
+img, svg, video, canvas { display: block; max-width: 100%; height: auto; }
+
+button, input, select, textarea { font: inherit; color: inherit; }
+
+button { background: none; border: none; cursor: pointer; }
+
+a { color: inherit; text-decoration: none; }
+
+ul, ol { list-style: none; }
+
+table { border-collapse: collapse; border-spacing: 0; }
+
+h1, h2, h3, h4, h5, h6 {
+    font-weight: var(--weight-bold);
+    line-height: var(--leading-tight);
+    letter-spacing: var(--tracking-tight);
+}
+
+/* ---------------------------------------------------------------------------
+   4. FOCUS
+   Keyboard focus is always visible. Pointer focus never is.
+   --------------------------------------------------------------------------- */
+:focus { outline: none; }
+
+:focus-visible {
+    outline: 2px solid var(--brand);
+    outline-offset: 2px;
+    border-radius: var(--radius-xs);
+}
+
+/* ---------------------------------------------------------------------------
+   5. NUMERIC TYPE
+   Everything that ticks, counts or lines up in a column.
+   --------------------------------------------------------------------------- */
+.font-data,
+.live-clock,
+.status-value,
+.stat-number,
+.summary-value,
+.stat-info h3,
+.data-table td,
+.ring-elapsed,
+.time-part {
+    font-family: var(--font-data);
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: 'tnum' 1, 'zero' 1;
+    letter-spacing: -0.01em;
+}
+
+/* ---------------------------------------------------------------------------
+   6. MOTION VOCABULARY
+   Every keyframe used anywhere in the app lives here. Transform and opacity
+   only — both run on the compositor, so nothing here can drop a frame.
+   --------------------------------------------------------------------------- */
+@keyframes ds-fade-in       { from { opacity: 0 } to { opacity: 1 } }
+@keyframes ds-fade-out      { from { opacity: 1 } to { opacity: 0 } }
+@keyframes ds-rise          { from { opacity: 0; transform: translate3d(0, 14px, 0) } to { opacity: 1; transform: none } }
+@keyframes ds-rise-sm       { from { opacity: 0; transform: translate3d(0, 8px, 0) }  to { opacity: 1; transform: none } }
+@keyframes ds-scale-in      { from { opacity: 0; transform: scale(0.94) }             to { opacity: 1; transform: scale(1) } }
+@keyframes ds-slide-left    { from { opacity: 0; transform: translate3d(24px, 0, 0) } to { opacity: 1; transform: none } }
+@keyframes ds-slide-up-lg   { from { opacity: 0; transform: translate3d(0, 40px, 0) } to { opacity: 1; transform: none } }
+@keyframes ds-spin          { to { transform: rotate(360deg) } }
+@keyframes ds-shimmer       { from { transform: translate3d(-100%, 0, 0) } to { transform: translate3d(100%, 0, 0) } }
+@keyframes ds-pulse-soft    { 0%, 100% { opacity: 1 } 50% { opacity: 0.55 } }
+@keyframes ds-ripple        { to { transform: scale(2.6); opacity: 0 } }
+@keyframes ds-ring-glow     { 0%, 100% { opacity: 0.5 } 50% { opacity: 0.95 } }
+@keyframes ds-check-pop     { 0% { transform: scale(0.4); opacity: 0 } 60% { transform: scale(1.12) } 100% { transform: scale(1); opacity: 1 } }
+@keyframes ds-drift {
+    0%   { transform: translate3d(0, 0, 0) scale(1) }
+    50%  { transform: translate3d(3%, -4%, 0) scale(1.06) }
+    100% { transform: translate3d(0, 0, 0) scale(1) }
+}
+
+/* Reusable entrance utilities. `.ds-stagger-*` offsets a shared animation so
+   a grid resolves as a wave rather than all at once. */
+.ds-animate-rise   { animation: ds-rise var(--dur-slow) var(--ease-standard) both; }
+.ds-animate-fade   { animation: ds-fade-in var(--dur-normal) var(--ease-standard) both; }
+.ds-animate-scale  { animation: ds-scale-in var(--dur-normal) var(--ease-spring) both; }
+
+.ds-stagger-1 { animation-delay: 40ms }
+.ds-stagger-2 { animation-delay: 80ms }
+.ds-stagger-3 { animation-delay: 120ms }
+.ds-stagger-4 { animation-delay: 160ms }
+.ds-stagger-5 { animation-delay: 200ms }
+.ds-stagger-6 { animation-delay: 240ms }
+
+/* ---------------------------------------------------------------------------
+   7. REDUCED MOTION
+   Motion is a garnish. If the OS asks for it gone, it goes — but nothing
+   is allowed to end up invisible, so entrances collapse to their end state.
+   --------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.001ms !important;
+        scroll-behavior: auto !important;
+    }
+    html { scroll-behavior: auto; }
+}
+
+/* Set by ui.js when the user turns motion off inside the app itself. */
+[data-motion='off'] *, [data-motion='off'] *::before, [data-motion='off'] *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+}
+
+/* ---------------------------------------------------------------------------
+   8. UTILITIES
+   --------------------------------------------------------------------------- */
+.text-center  { text-align: center; }
+.text-left    { text-align: left; }
+.text-right   { text-align: right; }
+.text-muted   { color: var(--text-muted); }
+.text-danger  { color: var(--danger); }
+.text-success { color: var(--success); }
+.text-warning { color: var(--warning); }
+.text-info    { color: var(--info); }
+.text-brand   { color: var(--brand-text); }
+
+.hidden { display: none !important; }
+
+.sr-only {
+    position: absolute;
+    width: 1px; height: 1px;
+    padding: 0; margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* Skip link — first tab stop on every page. */
+.skip-link {
+    position: absolute;
+    top: -100px; left: var(--space-4);
+    z-index: var(--z-overlay);
+    padding: var(--space-3) var(--space-5);
+    background: var(--brand);
+    color: var(--text-on-brand);
+    border-radius: var(--radius-sm);
+    font-weight: var(--weight-semi);
+    transition: top var(--dur-fast) var(--ease-standard);
+}
+.skip-link:focus { top: var(--space-4); }
+
+/* Promotes an element to its own compositor layer for the duration of a
+   transform animation. Applied by ui.js and removed on completion — leaving
+   it on permanently wastes GPU memory on low-end Android. */
+.ds-gpu { will-change: transform, opacity; }
+
+/* Scrollbars — desktop only; mobile browsers overlay their own. */
+@media (pointer: fine) {
+    * { scrollbar-width: thin; scrollbar-color: var(--border-strong) transparent; }
+    *::-webkit-scrollbar { width: 10px; height: 10px; }
+    *::-webkit-scrollbar-track { background: transparent; }
+    *::-webkit-scrollbar-thumb {
+        background: var(--border-strong);
+        border-radius: var(--radius-full);
+        border: 3px solid transparent;
+        background-clip: content-box;
+    }
+    *::-webkit-scrollbar-thumb:hover { background: var(--text-muted); background-clip: content-box; }
+}
