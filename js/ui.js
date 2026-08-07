@@ -20,7 +20,7 @@
     var MOTION_KEY  = 'sa-motion';
     var THEMES      = ['light', 'dark', 'glass'];
     var DEFAULT_THEME = 'light';
-    var SHIFT_HOURS = 9;                 /* full working day, for the ring only */
+    var SHIFT_HOURS = 8;                 /* full working day, for the ring only */
     var DESKTOP_MQ  = window.matchMedia('(min-width: 1024px)');
 
     var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches ||
