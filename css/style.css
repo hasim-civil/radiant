@@ -783,27 +783,16 @@ input[type='time']::-webkit-calendar-picker-indicator {
    =========================================================================== */
 .stats-grid {
     display: grid;
-    grid-auto-flow: column;
-    grid-auto-columns: 58%;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: var(--space-3);
     margin: var(--space-4) 0;
-    padding-bottom: var(--space-2);
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-    /* Bleeds to the screen edge so the row reads as scrollable. */
-    margin-inline: calc(var(--space-4) * -1);
-    padding-inline: var(--space-4);
 }
-.stats-grid::-webkit-scrollbar { display: none; }
 
 .stat-card {
     display: flex;
     align-items: center;
     gap: var(--space-3);
     padding: var(--space-4) var(--space-3);
-    scroll-snap-align: start;
     transition: transform var(--dur-normal) var(--ease-standard),
                 box-shadow var(--dur-normal) var(--ease-standard);
 }
@@ -812,7 +801,7 @@ input[type='time']::-webkit-calendar-picker-indicator {
 .stat-icon {
     display: grid;
     place-items: center;
-    width: 42px; height: 42px;
+    width: 38px; height: 38px;
     flex-shrink: 0;
     border-radius: var(--radius-md);
     font-size: 1rem;
@@ -828,10 +817,11 @@ input[type='time']::-webkit-calendar-picker-indicator {
 .stat-info { min-width: 0; }
 
 .stat-info h3 {
-    font-size: var(--text-lg);
+    font-size: var(--text-md);
     font-weight: var(--weight-bold);
-    line-height: 1.1;
+    line-height: 1.15;
     letter-spacing: var(--tracking-tight);
+    overflow-wrap: anywhere;
 }
 
 .stat-info p {
@@ -1716,7 +1706,7 @@ input[type='time']::-webkit-calendar-picker-indicator {
 
 /* ---- ≥480px : large phones ------------------------------------------------ */
 @media (min-width: 480px) {
-    .stats-grid { grid-auto-columns: 44%; }
+    .stats-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
     .attendance-status { grid-template-columns: repeat(3, minmax(0, 1fr)); }
     .summary-cards { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
@@ -1728,15 +1718,9 @@ input[type='time']::-webkit-calendar-picker-indicator {
 
     .live-clock { display: block; }
 
-    /* Stats stop scrolling and become a real grid. */
-    .stats-grid {
-        grid-auto-flow: row;
-        grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
-        grid-auto-columns: auto;
-        overflow: visible;
-        margin-inline: 0;
-        padding-inline: 0;
-    }
+    .stats-grid { grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); }
+    .stat-icon { width: 42px; height: 42px; }
+    .stat-info h3 { font-size: var(--text-lg); }
 
     .summary-cards { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 
