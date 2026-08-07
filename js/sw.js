@@ -1,6 +1,6 @@
 // Smart Attendance — Service Worker
 // Bump this on every deploy that changes cached files, so old caches get cleared.
-const CACHE_VERSION = 'v8';
+const CACHE_VERSION = 'v9';
 const STATIC_CACHE = `smart-attendance-static-${CACHE_VERSION}`;
 const RUNTIME_CACHE = `smart-attendance-runtime-${CACHE_VERSION}`;
 
@@ -15,7 +15,9 @@ const APP_SHELL = [
     'admin-register.html',
     'forgot-password.html',
     'manifest.json',
+    'css/design-system.css',
     'css/style.css',
+    'js/ui.js',
     'js/firebase.js',
     'js/auth.js',
     'js/leave-holiday.js',
