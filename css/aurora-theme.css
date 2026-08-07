@@ -49,6 +49,25 @@
     animation-delay: -8s;
 }
 
+/* ---- Dashboard-only boost -------------------------------------------------
+   The dashboard is the screen this was designed around (Today's Attendance,
+   the shift ring), so its aurora runs brighter and larger than the shared
+   default above — clearly visible rather than a hint at the edges, without
+   touching any other page. --------------------------------------------- */
+[data-theme='light'] body.dashboard-page::before {
+    background:
+        radial-gradient(720px 720px at 6% 4%,    rgba(0, 184, 169, 0.30) 0%, transparent 68%),   /* teal, top-left    */
+        radial-gradient(780px 780px at 98% 10%,  rgba(107, 78, 255, 0.32) 0%, transparent 68%),   /* violet, top-right */
+        radial-gradient(760px 760px at 2% 96%,   rgba(174, 155, 255, 0.28) 0%, transparent 70%),  /* lavender, bot-left*/
+        radial-gradient(800px 800px at 100% 100%, rgba(95, 217, 209, 0.26) 0%, transparent 70%);  /* cyan, bot-right   */
+}
+
+[data-theme='light'] body.dashboard-page::after {
+    background:
+        radial-gradient(620px 620px at 32% -4%, rgba(0, 184, 169, 0.18) 0%, transparent 66%),
+        radial-gradient(660px 660px at 76% 100%, rgba(107, 78, 255, 0.18) 0%, transparent 66%);
+}
+
 @keyframes aurora-drift-a {
     0%   { transform: translate3d(0, 0, 0) scale(1); }
     25%  { transform: translate3d(1.5%, -2%, 0) scale(1.03); }
@@ -79,13 +98,13 @@
 [data-theme='light'] .attendance-action-card::before {
     content: '';
     position: absolute;
-    inset: -28px;
+    inset: -36px;
     z-index: -1;
-    background: radial-gradient(60% 60% at 50% 38%,
-                rgba(107, 78, 255, 0.10) 0%,
-                rgba(0, 184, 169, 0.05) 45%,
-                transparent 75%);
-    filter: blur(6px);
+    background: radial-gradient(65% 65% at 50% 35%,
+                rgba(107, 78, 255, 0.20) 0%,
+                rgba(0, 184, 169, 0.12) 45%,
+                transparent 78%);
+    filter: blur(8px);
     pointer-events: none;
 }
 
