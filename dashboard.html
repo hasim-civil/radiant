@@ -90,9 +90,6 @@
         <main class="main-content">
             <!-- Top Bar -->
             <header class="top-bar">
-                <button class="mobile-menu-btn" id="mobileMenuBtn">
-                    <i class="fas fa-bars"></i>
-                </button>
                 <div class="welcome-text">
                     <h2>Welcome, <span id="userName">Employee</span>!</h2>
                     <p id="currentDate"></p>
@@ -211,32 +208,6 @@
                     </div>
                 </div>
 
-                <!-- Recent Attendance -->
-                <div class="card">
-                    <div class="card-header">
-                        <h3><i class="fas fa-history"></i> Recent Attendance</h3>
-                    </div>
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="data-table">
-                                <thead>
-                                    <tr>
-                                        <th>Date</th>
-                                        <th>Check In</th>
-                                        <th>Check Out</th>
-                                        <th>Hours</th>
-                                        <th>Status</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="recentAttendanceTable">
-                                    <tr>
-                                        <td colspan="5" class="text-center">Loading...</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
             </section>
 
             <!-- Attendance Section -->
@@ -333,30 +304,24 @@
                     </div>
                 </div>
 
-                <!-- Attendance Table -->
-                <div class="card">
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="data-table">
-                                <thead>
-                                    <tr>
-                                        <th>Date</th>
-                                        <th>Day</th>
-                                        <th>Check In</th>
-                                        <th>Check Out</th>
-                                        <th>Hours</th>
-                                        <th>Less / OT</th>
-                                        <th>Status</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="monthlyAttendanceTable">
-                                    <tr>
-                                        <td colspan="7" class="text-center">Loading...</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
+                <!-- Search -->
+                <div class="attendance-search">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="attendanceSearchInput" placeholder="Search by date or status...">
+                </div>
+
+                <!-- Status Filter Chips -->
+                <div class="attendance-filter-chips" id="attendanceFilterChips">
+                    <button type="button" class="filter-chip active" data-status="all">All</button>
+                    <button type="button" class="filter-chip" data-status="present">Present</button>
+                    <button type="button" class="filter-chip" data-status="absent">Absent</button>
+                    <button type="button" class="filter-chip" data-status="week-off">Week Off</button>
+                    <button type="button" class="filter-chip" data-status="holiday">Holiday</button>
+                </div>
+
+                <!-- Attendance Record List -->
+                <div class="attendance-record-list" id="monthlyAttendanceList">
+                    <div class="attendance-list-empty">Loading...</div>
                 </div>
             </section>
 
