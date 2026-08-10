@@ -1155,6 +1155,12 @@ async function loadMonthlyAttendance() {
         const attendanceMap = new Map();
         snapshot.forEach(docSnap => attendanceMap.set(docSnap.id, docSnap.data()));
 
+        // TEMP DEBUG — remove once the Aug 9 issue is resolved
+        console.log('[DEBUG] query range:', firstDayStr, 'to', lastDayStr);
+        console.log('[DEBUG] docs returned:', [...attendanceMap.keys()]);
+        console.log('[DEBUG] has 2026-08-09?', attendanceMap.has('2026-08-09'), attendanceMap.get('2026-08-09'));
+        console.log('[DEBUG] LAUNCH_DATE:', LAUNCH_DATE, 'todayStr:', todayStr);
+
         // Every day in the month, from launch date up to today (future days
         // aren't history yet, and nothing before launch was ever tracked)
         const dateList = getDaysInMonth(year, month).filter(d => d >= LAUNCH_DATE && d <= todayStr);
@@ -1193,6 +1199,16 @@ async function loadMonthlyAttendance() {
                 paidLeave: leaveMap.get(dateStr) || null,
                 isFutureOrToday: dateStr === todayStr
             });
+
+            // TEMP DEBUG — remove once the Aug 9 issue is resolved
+            if (dateStr === '2026-08-09') {
+                console.log('[DEBUG] Aug 9 inputs:', {
+                    attendanceData: attendanceMap.get(dateStr) || null,
+                    holiday: holidayMap.get(dateStr) || null,
+                    paidLeave: leaveMap.get(dateStr) || null
+                });
+                console.log('[DEBUG] Aug 9 resolved status:', resolved.status, resolved.statusLabel);
+            }
 
             if (resolved.status === 'present') {
                 totalPresent++;
