@@ -11,6 +11,17 @@
 const LATE_CUTOFF_HOUR = 11;
 const LATE_CUTOFF_MIN = 1; // 11:01 AM
 
+// ===================================
+// Attendance History List — state
+// ===================================
+
+// Resolved records for the currently-loaded month, most-recent first.
+// Kept in memory so search/filter chip changes can re-render instantly
+// without refetching from Firestore.
+let monthlyAttendanceRecords = [];
+let attendanceSearchQuery = '';
+let attendanceStatusFilter = 'all';
+
 /**
  * Determine whether a given check-in Date counts as a late arrival.
  * Cutoff: 11:01 AM or later is late; before that is on time.
@@ -209,6 +220,28 @@ function setupFilters() {
     // Add change listeners
     monthFilter.addEventListener('change', loadMonthlyAttendance);
     yearFilter.addEventListener('change', loadMonthlyAttendance);
+
+    // Search box: filters the already-loaded records, no refetch needed
+    const searchInput = document.getElementById('attendanceSearchInput');
+    if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+            attendanceSearchQuery = e.target.value;
+            renderAttendanceRecordList();
+        });
+    }
+
+    // Status filter chips
+    const chipsContainer = document.getElementById('attendanceFilterChips');
+    if (chipsContainer) {
+        chipsContainer.addEventListener('click', (e) => {
+            const chip = e.target.closest('.filter-chip');
+            if (!chip) return;
+            chipsContainer.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+            chip.classList.add('active');
+            attendanceStatusFilter = chip.dataset.status || 'all';
+            renderAttendanceRecordList();
+        });
+    }
 }
 
 // ===================================
@@ -971,7 +1004,8 @@ async function loadRecentAttendance() {
     if (!currentUser) return;
     
     const tableBody = document.getElementById('recentAttendanceTable');
-    
+    if (!tableBody) return; // Recent Attendance card removed from Overview
+
     try {
         // Build the last 7 calendar days (including today)
         const dateList = [];
@@ -1031,6 +1065,61 @@ async function loadRecentAttendance() {
 }
 
 /**
+ * Render the attendance record card list from monthlyAttendanceRecords,
+ * applying the current search query and status filter chip.
+ */
+function renderAttendanceRecordList() {
+    const listEl = document.getElementById('monthlyAttendanceList');
+    if (!listEl) return;
+
+    const q = attendanceSearchQuery.trim().toLowerCase();
+
+    const filtered = monthlyAttendanceRecords.filter(rec => {
+        if (attendanceStatusFilter !== 'all' && rec.resolved.status !== attendanceStatusFilter) {
+            return false;
+        }
+        if (!q) return true;
+        const haystack = [
+            rec.date.toLocaleDateString(),
+            rec.dayName,
+            rec.resolved.statusLabel,
+            rec.resolved.status
+        ].join(' ').toLowerCase();
+        return haystack.includes(q);
+    });
+
+    if (filtered.length === 0) {
+        listEl.innerHTML = '<div class="attendance-list-empty">No matching attendance records</div>';
+        return;
+    }
+
+    const html = filtered.map(rec => {
+        const { date, dayName, resolved } = rec;
+        const monthShort = date.toLocaleDateString('en-US', { month: 'short' });
+        const dayNum = date.getDate();
+        const dayShort = dayName.slice(0, 3);
+
+        return `
+            <div class="attendance-record-card">
+                <div class="attendance-record-date">
+                    <span class="rec-day-num">${monthShort} ${dayNum}</span>
+                    <span class="rec-weekday">${dayShort}</span>
+                </div>
+                <div class="attendance-record-times">
+                    <span>${resolved.checkIn}</span>
+                    <i class="fas fa-arrow-right"></i>
+                    <span>${resolved.checkOut}</span>
+                    ${resolved.hours && resolved.hours !== '--' ? `<span class="attendance-record-hours">${resolved.hours}</span>` : ''}
+                </div>
+                <span class="status-badge ${resolved.statusClass}">${resolved.statusLabel}</span>
+            </div>
+        `;
+    }).join('');
+
+    listEl.innerHTML = html;
+}
+
+/**
  * Load monthly attendance records
  */
 async function loadMonthlyAttendance() {
@@ -1043,7 +1132,7 @@ async function loadMonthlyAttendance() {
     const month = parseInt(document.getElementById('monthFilter').value);
     const year = parseInt(document.getElementById('yearFilter').value);
     
-    const tableBody = document.getElementById('monthlyAttendanceTable');
+    const listEl = document.getElementById('monthlyAttendanceList');
     
     // Calculate date range
     const firstDay = new Date(year, month, 1);
@@ -1072,7 +1161,8 @@ async function loadMonthlyAttendance() {
         const dateList = getDaysInMonth(year, month).filter(d => d >= LAUNCH_DATE && d <= todayStr);
 
         if (dateList.length === 0) {
-            tableBody.innerHTML = '<tr><td colspan="7" class="text-center">No attendance records for this month</td></tr>';
+            monthlyAttendanceRecords = [];
+            listEl.innerHTML = '<div class="attendance-list-empty">No attendance records for this month</div>';
             document.getElementById('monthlyPresent').textContent = '0';
             document.getElementById('monthlyWeekOff').textContent = '0';
             document.getElementById('monthlyHoliday').textContent = '0';
@@ -1085,11 +1175,12 @@ async function loadMonthlyAttendance() {
             return;
         }
         
-        let html = '';
         const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
         let totalPresent = 0, weekOffCount = 0, holidayCount = 0, paidLeaveCount = 0, absentCount = 0;
         let totalHours = 0, monthlyLess = 0, monthlyOvertime = 0;
+
+        const records = [];
 
         // Most recent first
         [...dateList].reverse().forEach(dateStr => {
@@ -1118,21 +1209,12 @@ async function loadMonthlyAttendance() {
             } else if (resolved.status === 'absent') {
                 absentCount++;
             }
-            
-            html += `
-                <tr>
-                    <td>${date.toLocaleDateString()}</td>
-                    <td>${dayName}</td>
-                    <td>${resolved.checkIn}</td>
-                    <td>${resolved.checkOut}</td>
-                    <td>${resolved.hours}</td>
-                    <td>${resolved.lessOtCell}</td>
-                    <td><span class="status-badge ${resolved.statusClass}">${resolved.statusLabel}</span></td>
-                </tr>
-            `;
+
+            records.push({ dateStr, date, dayName, resolved });
         });
-        
-        tableBody.innerHTML = html;
+
+        monthlyAttendanceRecords = records;
+        renderAttendanceRecordList();
         
         // Update summary
         const avgHours = totalPresent > 0 ? totalHours / totalPresent : 0;
@@ -1148,7 +1230,7 @@ async function loadMonthlyAttendance() {
         
     } catch (error) {
         console.error('Error loading monthly attendance:', error);
-        tableBody.innerHTML = '<tr><td colspan="7" class="text-center text-danger">Error loading data</td></tr>';
+        listEl.innerHTML = '<div class="attendance-list-empty">Error loading data</div>';
     }
 }
 
