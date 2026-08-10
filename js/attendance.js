@@ -957,7 +957,10 @@ async function loadAttendanceStats() {
                 presentDays++;
                 totalHours += data.totalHours || 0;
             }
-            if (data.isLate) {
+            // Recalculate lateness from the actual check-in time rather than
+            // trusting the stored isLate flag, which can go stale if a record's
+            // time was edited after it was first saved.
+            if (data.checkIn && isLateCheckIn(data.checkIn.toDate())) {
                 lateDays++;
             }
         });
