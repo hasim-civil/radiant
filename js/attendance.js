@@ -690,12 +690,10 @@ async function handleCheckIn() {
     showLoading();
     
     try {
-        // Block check-in on Week Off / Holiday / approved Paid Leave days
-        if (isWeekOff(today)) {
-            hideLoading();
-            showToast('Today is a Week Off. Check-in is not required.', 'warning');
-            return;
-        }
+        // Holiday and approved Paid Leave still block check-in (company-assigned
+        // days off). Week Off (e.g. Sunday) no longer blocks it — an employee who
+        // voluntarily works their weekly off day can check in/out normally and it
+        // will be recorded and counted (e.g. as Present/Outstation) like any other day.
         const holidayToday = await getHoliday(today);
         if (holidayToday) {
             hideLoading();
