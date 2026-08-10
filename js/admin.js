@@ -163,7 +163,8 @@ function setupAdminSidebar() {
     
     document.addEventListener('click', (e) => {
         if (window.innerWidth <= 768) {
-            if (!sidebar.contains(e.target) && !mobileMenuBtn.contains(e.target)) {
+            const clickedMenuBtn = mobileMenuBtn && mobileMenuBtn.contains(e.target);
+            if (!sidebar.contains(e.target) && !clickedMenuBtn) {
                 sidebar.classList.remove('mobile-open');
             }
         }
