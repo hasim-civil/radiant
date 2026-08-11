@@ -936,27 +936,58 @@ async function loadAttendanceStats() {
     if (!currentUser) return;
     
     try {
-        // Get all attendance records for current month
+        // Get all attendance records for current month.
+        // Bound BOTH ends of the range: an unbounded '>=' also sweeps up any
+        // record dated after this month, which would corrupt every total below.
         const today = new Date();
         const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
+        const lastDay = new Date(today.getFullYear(), today.getMonth() + 1, 0);
         const firstDayStr = toLocalDateString(firstDay);
-        
+        const lastDayStr = toLocalDateString(lastDay);
+
         const attendanceRef = collection(db, 'attendance', currentUser.uid, 'records');
-        const q = query(attendanceRef, where('date', '>=', firstDayStr));
+        const q = query(
+            attendanceRef,
+            where('date', '>=', firstDayStr),
+            where('date', '<=', lastDayStr)
+        );
         const snapshot = await getDocs(q);
-        
+
+        const STANDARD_HOURS = 8;
+
         let totalDays = 0;
         let totalHours = 0;
         let presentDays = 0;
+        let hoursDays = 0;      // present days that actually carry recorded hours
         let lateDays = 0;
-        
+        let totalLess = 0;
+        let totalOvertime = 0;
+
         snapshot.forEach(doc => {
             const data = doc.data();
             totalDays++;
+
             if (data.status === 'present') {
                 presentDays++;
-                totalHours += data.totalHours || 0;
+
+                // A record can read 'present' while its hours are still null or
+                // undefined. Adding 0 for that day while still counting it in
+                // the divisor is what skewed the average downward, so such days
+                // stay out of both sides of the division.
+                const hours = typeof data.totalHours === 'number' && !isNaN(data.totalHours)
+                    ? data.totalHours
+                    : null;
+
+                if (hours !== null) {
+                    hoursDays++;
+                    totalHours += hours;
+
+                    const diff = hours - STANDARD_HOURS;
+                    if (diff < 0) totalLess += Math.abs(diff);
+                    else totalOvertime += diff;
+                }
             }
+
             // Recalculate lateness from the actual check-in time rather than
             // trusting the stored isLate flag, which can go stale if a record's
             // time was edited after it was first saved.
@@ -964,21 +995,9 @@ async function loadAttendanceStats() {
                 lateDays++;
             }
         });
-        
-        const avgHours = presentDays > 0 ? totalHours / presentDays : 0;
 
-        // Calculate less hours and overtime (8h standard)
-        const STANDARD_HOURS = 8;
-        let totalLess = 0;
-        let totalOvertime = 0;
-        snapshot.forEach(doc => {
-            const data = doc.data();
-            if (data.status === 'present' && data.totalHours !== null) {
-                const diff = data.totalHours - STANDARD_HOURS;
-                if (diff < 0) totalLess += Math.abs(diff);
-                else totalOvertime += diff;
-            }
-        });
+        // Average across the days that contributed hours, not every present day.
+        const avgHours = hoursDays > 0 ? totalHours / hoursDays : 0;
 
         // Update UI
         document.getElementById('totalDays').textContent = totalDays;
@@ -1181,6 +1200,7 @@ async function loadMonthlyAttendance() {
 
         let totalPresent = 0, weekOffCount = 0, holidayCount = 0, paidLeaveCount = 0, absentCount = 0;
         let totalHours = 0, monthlyLess = 0, monthlyOvertime = 0;
+        let hoursDays = 0;  // present days that actually carry recorded hours
 
         const records = [];
 
@@ -1199,7 +1219,10 @@ async function loadMonthlyAttendance() {
 
             if (resolved.status === 'present') {
                 totalPresent++;
-                totalHours += resolved.hoursValue || 0;
+                if (typeof resolved.hoursValue === 'number' && !isNaN(resolved.hoursValue)) {
+                    hoursDays++;
+                    totalHours += resolved.hoursValue;
+                }
                 monthlyLess += resolved.lessValue;
                 monthlyOvertime += resolved.overtimeValue;
             } else if (resolved.status === 'week-off') {
@@ -1219,7 +1242,7 @@ async function loadMonthlyAttendance() {
         renderAttendanceRecordList();
         
         // Update summary
-        const avgHours = totalPresent > 0 ? totalHours / totalPresent : 0;
+        const avgHours = hoursDays > 0 ? totalHours / hoursDays : 0;
         document.getElementById('monthlyPresent').textContent = totalPresent;
         document.getElementById('monthlyWeekOff').textContent = weekOffCount;
         document.getElementById('monthlyHoliday').textContent = holidayCount;
