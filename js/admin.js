@@ -974,6 +974,7 @@ async function loadMonthlySummary() {
 
         let presentCount = 0, weekOffCount = 0, holidayCount = 0, paidLeaveCount = 0, absentCount = 0;
         let totalHours = 0, totalLess = 0, totalOvertime = 0;
+        let hoursDays = 0;  // present days that actually carry recorded hours
 
         // Fetch every employee's attendance + leave records concurrently
         const perEmployee = await Promise.all(employees.map(async (emp) => {
@@ -1008,7 +1009,10 @@ async function loadMonthlySummary() {
 
                 if (resolved.status === 'present') {
                     presentCount++;
-                    totalHours += resolved.hoursValue || 0;
+                    if (typeof resolved.hoursValue === 'number' && !isNaN(resolved.hoursValue)) {
+                        hoursDays++;
+                        totalHours += resolved.hoursValue;
+                    }
                     totalLess += resolved.lessValue;
                     totalOvertime += resolved.overtimeValue;
                 } else if (resolved.status === 'week-off') {
@@ -1025,7 +1029,7 @@ async function loadMonthlySummary() {
             }
         }
         
-        const avgHours = presentCount > 0 ? totalHours / presentCount : 0;
+        const avgHours = hoursDays > 0 ? totalHours / hoursDays : 0;
         
         // Update UI
         document.getElementById('summaryPresent').textContent = presentCount;
