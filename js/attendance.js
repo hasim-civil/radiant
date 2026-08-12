@@ -96,8 +96,10 @@ function setupDashboard(userData) {
     // Setup sidebar toggle
     setupSidebar();
     
-    // Setup logout button
-    document.getElementById('logoutBtn').addEventListener('click', logoutUser);
+    // Setup logout buttons (sidebar + profile section)
+    document.querySelectorAll('#logoutBtn, #profileLogoutBtn').forEach(btn => {
+        btn.addEventListener('click', logoutUser);
+    });
     
     // Setup check-in/out buttons
     setupAttendanceButtons();
