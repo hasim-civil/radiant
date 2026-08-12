@@ -64,8 +64,10 @@ function setupAdminDashboard(userData) {
     // Setup sidebar
     setupAdminSidebar();
     
-    // Setup logout
-    document.getElementById('logoutBtn').addEventListener('click', logoutUser);
+    // Setup logout (sidebar drawer + top bar shortcut)
+    document.querySelectorAll('#logoutBtn, #topLogoutBtn').forEach(btn => {
+        btn.addEventListener('click', logoutUser);
+    });
     
     // Setup modals
     setupModals();

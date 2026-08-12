@@ -123,6 +123,25 @@
 }
 .mobile-menu-btn:active { background: var(--surface-hover); color: var(--text-primary); }
 
+/* Small icon-only affordance in the top bar. Currently just the admin
+   sign-out shortcut — logout otherwise lives inside the sidebar drawer,
+   which on mobile means a hamburger tap plus a scroll to the drawer's
+   footer just to sign out. */
+.icon-btn {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: var(--tap-min); height: var(--tap-min);
+    border-radius: var(--radius-md);
+    color: var(--text-secondary);
+    font-size: 1.05rem;
+    transition: background var(--dur-fast) var(--ease-standard),
+                color var(--dur-fast) var(--ease-standard);
+}
+.icon-btn:hover, .icon-btn:active { background: var(--surface-hover); color: var(--text-primary); }
+.icon-btn-danger { color: var(--danger); }
+.icon-btn-danger:hover, .icon-btn-danger:active { background: var(--danger-subtle); color: var(--danger); }
+
 /* ---------------------------------------------------------------------------
    Sidebar — off-canvas drawer on mobile, permanent rail on desktop.
    --------------------------------------------------------------------------- */
