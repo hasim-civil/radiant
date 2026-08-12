@@ -729,7 +729,23 @@
     }
 
     /* =======================================================================
-       16. AURORA PARALLAX
+       16. GREETING
+       "Welcome" is fine at 2pm but reads as filler on a screen someone
+       glances at every morning. #greetingWord only exists on dashboard.html.
+       ===================================================================== */
+    function initGreeting() {
+        var word = $('#greetingWord');
+        if (!word) return;
+        var h = new Date().getHours();
+        word.textContent = h < 5  ? 'Still up'
+                          : h < 12 ? 'Good morning'
+                          : h < 17 ? 'Good afternoon'
+                          : h < 21 ? 'Good evening'
+                          : 'Good night';
+    }
+
+    /* =======================================================================
+       17. AURORA PARALLAX
        Dashboard only. The aurora wash in aurora-theme.css already drifts on
        its own timer; this nudges it toward the cursor as well, via two CSS
        vars (--aurora-px/--aurora-py) that the wash keyframes add into their
@@ -760,7 +776,7 @@
     }
 
     /* =======================================================================
-       17. PUBLIC HELPERS
+       18. PUBLIC HELPERS
        Exposed for later phases. Nothing in this phase depends on them.
        ===================================================================== */
     window.SmartUI = {
@@ -803,6 +819,7 @@
         initLoadingOverlay();
         initSectionScroll();
         initAuroraParallax();
+        initGreeting();
         Ring.mount();
 
         /* Pages without a loading overlay reveal immediately. */
