@@ -34,7 +34,7 @@
 
 [data-theme='light'] body.dashboard-page::before,
 [data-theme='light'] body.dashboard-page::after {
-    will-change: transform;
+    will-change: transform, opacity;
 }
 
 [data-theme='light'] body::before {
@@ -60,17 +60,23 @@
    position. This is what makes the motion read as "everywhere" rather than
    as a few soft dots in the corners — closer to the reference. Scoped to
    .dashboard-page only; every other page keeps the original subtle blobs
-   above untouched. --------------------------------------------------- */
+   above untouched.
+
+   --aurora-px/--aurora-py are written by ui.js's initAuroraParallax (desktop
+   pointer only) and default to 0px everywhere else, so the wash also drifts
+   a few pixels toward the cursor on top of its own independent loop — the
+   two motions read as one live surface rather than a canned loop. --------- */
 [data-theme='light'] body.dashboard-page::before {
     background-image:
-        radial-gradient(1100px 1100px at 0% 0%,   rgba(107, 78, 255, 0.50) 0%, transparent 55%),
-        radial-gradient(1100px 1100px at 100% 100%, rgba(0, 184, 169, 0.50) 0%, transparent 55%),
+        radial-gradient(620px 620px at 50% 40%, rgba(174, 155, 255, 0.48) 0%, transparent 60%),
+        radial-gradient(1100px 1100px at 0% 0%,   rgba(107, 78, 255, 0.64) 0%, transparent 55%),
+        radial-gradient(1100px 1100px at 100% 100%, rgba(0, 184, 169, 0.64) 0%, transparent 55%),
         linear-gradient(125deg,
-            rgba(107, 78, 255, 0.34) 0%,
-            rgba(174, 155, 255, 0.22) 24%,
+            rgba(107, 78, 255, 0.46) 0%,
+            rgba(174, 155, 255, 0.30) 24%,
             rgba(255, 255, 255, 0) 48%,
-            rgba(95, 217, 209, 0.22) 74%,
-            rgba(0, 184, 169, 0.34) 100%);
+            rgba(95, 217, 209, 0.30) 74%,
+            rgba(0, 184, 169, 0.46) 100%);
     background-repeat: no-repeat;
     /* Oversized relative to the viewport so the animated transform below can
        slide/scale it without ever revealing a hard edge. */
@@ -81,8 +87,8 @@
 
 [data-theme='light'] body.dashboard-page::after {
     background-image:
-        radial-gradient(900px 900px at 50% 0%, rgba(0, 184, 169, 0.20) 0%, transparent 60%),
-        radial-gradient(900px 900px at 50% 100%, rgba(107, 78, 255, 0.20) 0%, transparent 60%);
+        radial-gradient(900px 900px at 50% 0%, rgba(0, 184, 169, 0.30) 0%, transparent 60%),
+        radial-gradient(900px 900px at 50% 100%, rgba(107, 78, 255, 0.30) 0%, transparent 60%);
     background-repeat: no-repeat;
     background-size: 160% 160%;
     background-position: -30% -30%;
@@ -93,20 +99,22 @@
 /* transform-based motion (proven to repaint reliably) rather than animating
    background-position, which some browsers fail to recomposite on a fixed-
    position pseudo-element. Large excursions on an oversized gradient field
-   make the sweep read as covering the whole screen. */
+   make the sweep read as covering the whole screen. A gentle opacity breathe
+   rides alongside the transform so the wash reads as lit rather than merely
+   sliding — still transform/opacity only, so compositing stays cheap. */
 @keyframes aurora-wash-dashboard {
-    0%   { transform: translate3d(0, 0, 0) scale(1); }
-    25%  { transform: translate3d(6%, -7%, 0) scale(1.12); }
-    50%  { transform: translate3d(-5%, 8%, 0) scale(1.20); }
-    75%  { transform: translate3d(-8%, -4%, 0) scale(1.10); }
-    100% { transform: translate3d(0, 0, 0) scale(1); }
+    0%   { transform: translate3d(var(--aurora-px, 0px), var(--aurora-py, 0px), 0) scale(1); opacity: 0.92; }
+    25%  { transform: translate3d(calc(6% + var(--aurora-px, 0px)), calc(-7% + var(--aurora-py, 0px)), 0) scale(1.12); opacity: 1; }
+    50%  { transform: translate3d(calc(-5% + var(--aurora-px, 0px)), calc(8% + var(--aurora-py, 0px)), 0) scale(1.20); opacity: 0.9; }
+    75%  { transform: translate3d(calc(-8% + var(--aurora-px, 0px)), calc(-4% + var(--aurora-py, 0px)), 0) scale(1.10); opacity: 1; }
+    100% { transform: translate3d(var(--aurora-px, 0px), var(--aurora-py, 0px), 0) scale(1); opacity: 0.92; }
 }
 
 @keyframes aurora-wash-dashboard-b {
-    0%   { transform: translate3d(0, 0, 0) scale(1); }
-    33%  { transform: translate3d(-7%, 6%, 0) scale(1.14); }
-    66%  { transform: translate3d(7%, -6%, 0) scale(1.08); }
-    100% { transform: translate3d(0, 0, 0) scale(1); }
+    0%   { transform: translate3d(var(--aurora-px, 0px), var(--aurora-py, 0px), 0) scale(1); opacity: 0.85; }
+    33%  { transform: translate3d(calc(-7% + var(--aurora-px, 0px)), calc(6% + var(--aurora-py, 0px)), 0) scale(1.14); opacity: 1; }
+    66%  { transform: translate3d(calc(7% + var(--aurora-px, 0px)), calc(-6% + var(--aurora-py, 0px)), 0) scale(1.08); opacity: 0.95; }
+    100% { transform: translate3d(var(--aurora-px, 0px), var(--aurora-py, 0px), 0) scale(1); opacity: 0.85; }
 }
 
 @keyframes aurora-drift-a {
@@ -248,6 +256,21 @@
 [data-theme='light'] .bottom-nav {
     -webkit-backdrop-filter: saturate(190%) blur(22px);
     backdrop-filter: saturate(190%) blur(22px);
+}
+
+/* Dashboard-only exception to "card bodies stay solid": on the dashboard the
+   aurora wash IS the feature, and opaque cards cover most of the viewport,
+   leaving it visible only in the thin gaps between them. A light frost on
+   the dashboard's own cards keeps text at ~13:1 contrast (still far past
+   the 4.5:1 floor against near-black text) while letting the wash read
+   through the whole page instead of just its edges. */
+[data-theme='light'] body.dashboard-page .stat-card,
+[data-theme='light'] body.dashboard-page .attendance-action-card,
+[data-theme='light'] body.dashboard-page .summary-card,
+[data-theme='light'] body.dashboard-page .profile-card {
+    background: rgba(255, 255, 255, 0.76);
+    -webkit-backdrop-filter: saturate(165%) blur(20px);
+    backdrop-filter: saturate(165%) blur(20px);
 }
 
 [data-theme='light'] .modal-content {

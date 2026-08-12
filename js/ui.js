@@ -729,7 +729,54 @@
     }
 
     /* =======================================================================
-       16. PUBLIC HELPERS
+       16. GREETING
+       "Welcome" is fine at 2pm but reads as filler on a screen someone
+       glances at every morning. #greetingWord only exists on dashboard.html.
+       ===================================================================== */
+    function initGreeting() {
+        var word = $('#greetingWord');
+        if (!word) return;
+        var h = new Date().getHours();
+        word.textContent = h < 5  ? 'Still up'
+                          : h < 12 ? 'Good morning'
+                          : h < 17 ? 'Good afternoon'
+                          : h < 21 ? 'Good evening'
+                          : 'Good night';
+    }
+
+    /* =======================================================================
+       17. AURORA PARALLAX
+       Dashboard only. The aurora wash in aurora-theme.css already drifts on
+       its own timer; this nudges it toward the cursor as well, via two CSS
+       vars (--aurora-px/--aurora-py) that the wash keyframes add into their
+       own transform. Desktop pointer only — a touch screen has no cursor to
+       track, and reduced-motion users already get the drift itself switched
+       off in CSS, so skipping the listener here just saves the event cost.
+       ===================================================================== */
+    function initAuroraParallax() {
+        if (reduceMotion || !document.body.classList.contains('dashboard-page')) return;
+        if (!window.matchMedia('(pointer: fine)').matches) return;
+
+        var root = document.documentElement;
+        var targetX = 0, targetY = 0, curX = 0, curY = 0;
+        var MAX_PX = 22;
+
+        window.addEventListener('pointermove', function (e) {
+            targetX = (e.clientX / window.innerWidth  - 0.5) * 2 * MAX_PX;
+            targetY = (e.clientY / window.innerHeight - 0.5) * 2 * MAX_PX;
+        }, { passive: true });
+
+        (function tick() {
+            curX += (targetX - curX) * 0.06;
+            curY += (targetY - curY) * 0.06;
+            root.style.setProperty('--aurora-px', curX.toFixed(2) + 'px');
+            root.style.setProperty('--aurora-py', curY.toFixed(2) + 'px');
+            requestAnimationFrame(tick);
+        })();
+    }
+
+    /* =======================================================================
+       18. PUBLIC HELPERS
        Exposed for later phases. Nothing in this phase depends on them.
        ===================================================================== */
     window.SmartUI = {
@@ -771,6 +818,8 @@
         initToasts();
         initLoadingOverlay();
         initSectionScroll();
+        initAuroraParallax();
+        initGreeting();
         Ring.mount();
 
         /* Pages without a loading overlay reveal immediately. */
