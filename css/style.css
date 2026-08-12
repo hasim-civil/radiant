@@ -255,6 +255,20 @@
 .logout-btn i { width: 20px; text-align: center; }
 .logout-btn:hover { background: var(--danger-subtle); }
 
+/* Sign Out button inside the Profile section */
+.profile-actions {
+    margin-top: var(--space-4);
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--border-subtle);
+}
+.logout-btn-profile {
+    width: auto;
+    justify-content: center;
+    padding-inline: var(--space-5);
+    border: 1px solid var(--danger);
+    cursor: pointer;
+}
+
 .sidebar-credit { text-align: center; }
 .sidebar-credit small {
     font-size: var(--text-2xs);
