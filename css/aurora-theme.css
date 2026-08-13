@@ -329,24 +329,3 @@
     [data-theme='light'] body::after { display: none; }
 }
 
-/* ---------------------------------------------------------------------------
-   9. LANDING HERO GLOW
-   The floating photo frame on index.html reads as "on brand" rather than a
-   generic image crop because of the soft blurred color bleeding around its
-   rounded corners — same trick as the dashboard's aurora wash, just parked
-   behind a photo instead of behind cards. .hero-frame-glow is a real element
-   (not a pseudo-element) so it can sit behind the photo card without fighting
-   body::before/::after for the same stacking slot.
-   --------------------------------------------------------------------------- */
-[data-theme='light'] .hero-frame-glow {
-    position: absolute;
-    inset: -48px 0 -24px;
-    z-index: -1;
-    pointer-events: none;
-    background:
-        radial-gradient(480px 480px at 6% 15%,  rgba(107, 78, 255, 0.55) 0%, transparent 65%),
-        radial-gradient(520px 520px at 94% 10%,  rgba(0, 184, 169, 0.50) 0%, transparent 65%),
-        radial-gradient(460px 460px at 50% 100%, rgba(174, 155, 255, 0.45) 0%, transparent 65%);
-    filter: blur(50px);
-    animation: aurora-drift-a 30s ease-in-out infinite;
-}
