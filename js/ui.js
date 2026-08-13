@@ -776,55 +776,7 @@
     }
 
     /* =======================================================================
-       18. LANDING PAGE — SCROLL REVEAL
-       Only index.html has .reveal elements. Progressive enhancement: they
-       start fully visible in plain CSS and are only hidden once armed here,
-       so no-JS / no-IntersectionObserver / reduced-motion all fall back to
-       "just show it" rather than a permanently invisible section.
-       ===================================================================== */
-    function initScrollReveal() {
-        var targets = $$('.reveal');
-        if (!targets.length || reduceMotion || !window.IntersectionObserver) return;
-
-        targets.forEach(function (el) { el.classList.add('reveal-armed'); });
-
-        var io = new IntersectionObserver(function (entries) {
-            entries.forEach(function (entry) {
-                if (!entry.isIntersecting) return;
-                entry.target.classList.add('is-visible');
-                io.unobserve(entry.target);
-            });
-        }, { threshold: 0.15, rootMargin: '0px 0px -8% 0px' });
-
-        targets.forEach(function (el) { io.observe(el); });
-    }
-
-    /* =======================================================================
-       19. LANDING PAGE — NAV
-       Mobile menu toggle for the sticky .ld-nav. No-op on every other page.
-       ===================================================================== */
-    function initLandingNav() {
-        var toggle = $('#ldNavToggle');
-        var menu = $('#ldNavMobile');
-        if (!toggle || !menu) return;
-
-        toggle.addEventListener('click', function () {
-            var open = menu.classList.toggle('is-open');
-            toggle.setAttribute('aria-expanded', String(open));
-            toggle.querySelector('i').className = open ? 'fas fa-xmark' : 'fas fa-bars';
-        });
-
-        $$('a', menu).forEach(function (a) {
-            a.addEventListener('click', function () {
-                menu.classList.remove('is-open');
-                toggle.setAttribute('aria-expanded', 'false');
-                toggle.querySelector('i').className = 'fas fa-bars';
-            });
-        });
-    }
-
-    /* =======================================================================
-       20. PUBLIC HELPERS
+       18. PUBLIC HELPERS
        Exposed for later phases. Nothing in this phase depends on them.
        ===================================================================== */
     window.SmartUI = {
@@ -868,8 +820,6 @@
         initSectionScroll();
         initAuroraParallax();
         initGreeting();
-        initScrollReveal();
-        initLandingNav();
         Ring.mount();
 
         /* Pages without a loading overlay reveal immediately. */
