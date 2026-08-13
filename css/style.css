@@ -302,26 +302,18 @@
 .logo, .auth-logo {
     display: inline-flex;
     align-items: center;
-    gap: var(--space-2);
-    font-size: var(--text-md);
-    font-weight: var(--weight-black);
-    letter-spacing: var(--tracking-tight);
-    color: var(--text-primary);
+    min-width: 0;
 }
 
-.logo-icon, .logo-icon-small, .auth-logo i {
-    display: grid;
-    place-items: center;
-    width: 34px; height: 34px;
-    flex-shrink: 0;
-    border-radius: var(--radius-sm);
-    background: linear-gradient(140deg, var(--violet-500), var(--violet-700));
-    color: #fff;
-    font-size: 0.9rem;
-    box-shadow: var(--shadow-brand);
-}
+.logo img, .auth-logo img { display: block; width: auto; }
+.logo img.logo-full   { height: 26px; }
+.logo img.logo-collapsed { display: none; height: 30px; }
+.auth-logo img { height: 34px; }
 
-.logo-icon { width: 40px; height: 40px; font-size: 1.05rem; }
+/* Collapsed desktop rail: the full wordmark no longer fits, so swap to
+   just the icon mark rather than truncating or overflowing it. */
+.sidebar.collapsed .logo img.logo-full { display: none; }
+.sidebar.collapsed .logo img.logo-collapsed { display: block; }
 
 /* ---------------------------------------------------------------------------
    Bottom navigation — mobile primary nav, built by ui.js from .sidebar-nav.
@@ -1770,21 +1762,13 @@ input[type='time']::-webkit-calendar-picker-indicator {
     padding: var(--space-5);
 }
 
-.hero-logo {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-2);
-    padding: var(--space-2) var(--space-4);
-    border-radius: var(--radius-full);
-    background: rgba(255, 255, 255, 0.14);
-    -webkit-backdrop-filter: blur(14px);
-    backdrop-filter: blur(14px);
-    color: #fff;
-    font-weight: var(--weight-bold);
-    font-size: var(--text-sm);
-    white-space: nowrap;
+.hero-logo { display: inline-flex; align-items: center; flex-shrink: 0; }
+.hero-logo img {
+    display: block;
+    height: 30px;
+    width: auto;
+    filter: drop-shadow(0 2px 10px rgba(0, 0, 0, 0.35));
 }
-.hero-logo i { color: var(--violet-300); }
 
 .hero-pill-nav {
     display: flex;
@@ -1813,12 +1797,11 @@ input[type='time']::-webkit-calendar-picker-indicator {
 .hero-pill-nav a.hero-pill-cta { background: #fff; color: var(--violet-700); }
 .hero-pill-nav a.hero-pill-cta:hover { background: var(--violet-100); color: var(--violet-700); }
 
-/* Narrow phones: logo text is the first thing to give up width to
+/* Narrow phones: the wordmark is the first thing to give up width to
    Login/Sign Up, which are the two links that actually matter when the
    whole nav has ~350px to work with. */
 @media (max-width: 479px) {
-    .hero-logo span { display: none; }
-    .hero-logo { padding: var(--space-2); }
+    .hero-logo img { height: 24px; }
 }
 
 .hero-photo-content {
@@ -1964,7 +1947,6 @@ input[type='time']::-webkit-calendar-picker-indicator {
 
     /* Collapsed rail — icons only, labels removed. */
     .sidebar.collapsed { width: var(--sidebar-w-collapsed); }
-    .sidebar.collapsed .logo span,
     .sidebar.collapsed .nav-item span,
     .sidebar.collapsed .logout-btn span,
     .sidebar.collapsed .sidebar-credit,
