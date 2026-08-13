@@ -57,52 +57,43 @@
 
     <!-- Landing Page -->
     <div class="landing-container">
-        <!-- Header -->
-        <header class="landing-header">
-            <div class="logo">
-                <i class="fas fa-clock logo-icon"></i>
-                <span>Smart Attendance</span>
-            </div>
-            <div class="header-actions">
-                <a href="login.html" class="btn btn-outline">Login</a>
-                <a href="register.html" class="btn btn-primary">Sign Up</a>
-            </div>
-        </header>
+        <!-- Hero Section — nav lives inside the photo overlay, not a
+             separate bar, so it never needs to persist below the fold. -->
+        <div class="hero-frame">
+            <div class="hero-frame-glow" aria-hidden="true"></div>
+            <section class="hero-photo">
+                <div class="hero-photo-bg"></div>
+                <div class="hero-photo-overlay"></div>
 
-        <!-- Hero Section -->
-        <section class="hero">
-            <div class="hero-content">
-                <h1>Smart Employee Attendance Management</h1>
-                <p>Track attendance, manage employees, and generate reports with our modern, easy-to-use attendance system.</p>
-                <div class="hero-buttons">
-                    <a href="register.html" class="btn btn-primary btn-lg">
-                        <i class="fas fa-rocket"></i> Start Free
+                <div class="hero-photo-nav">
+                    <a href="index.html" class="hero-logo">
+                        <i class="fas fa-clock"></i>
+                        <span>Smart Attendance</span>
                     </a>
+                    <nav class="hero-pill-nav">
+                        <a href="#features" class="hero-pill-link-features">Features</a>
+                        <a href="login.html">Login</a>
+                        <a href="register.html" class="hero-pill-cta">Sign Up</a>
+                    </nav>
                 </div>
-            </div>
-            <div class="hero-image">
-                <div class="hero-card">
-                    <div class="card-header">
-                        <i class="fas fa-user-check"></i>
-                        <span>Today's Attendance</span>
-                    </div>
-                    <div class="card-stats">
-                        <div class="stat">
-                            <span class="stat-number">24</span>
-                            <span class="stat-label">Present</span>
-                        </div>
-                        <div class="stat">
-                            <span class="stat-number">3</span>
-                            <span class="stat-label">Absent</span>
-                        </div>
-                        <div class="stat">
-                            <span class="stat-number">2</span>
-                            <span class="stat-label">Late</span>
-                        </div>
+
+                <div class="hero-photo-content">
+                    <h1>Attendance your team actually keeps up with</h1>
+                    <p>Check in, track hours, and see who's working — live, from any device, without a single spreadsheet.</p>
+                    <div class="hero-buttons">
+                        <a href="register.html" class="btn btn-pill btn-pill-dark">
+                            <i class="fas fa-rocket"></i> Start for Free
+                        </a>
+                        <a href="login.html" class="btn btn-pill btn-pill-brand">Sign In</a>
                     </div>
                 </div>
-            </div>
-        </section>
+
+                <a href="#features" class="hero-scroll-cue">
+                    <span>Scroll Down</span>
+                    <span class="hero-scroll-track"><span class="hero-scroll-thumb"></span></span>
+                </a>
+            </section>
+        </div>
 
         <!-- Features Section -->
         <section class="features" id="features">

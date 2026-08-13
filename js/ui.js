@@ -640,7 +640,7 @@
         if (revealed || reduceMotion) return;
         revealed = true;
 
-        var targets = $$('.content-section.active > *, .auth-card, .hero-content, .hero-card, .feature-card');
+        var targets = $$('.content-section.active > *, .auth-card, .hero-photo-content, .feature-card');
         if (!targets.length) return;
 
         if (window.gsap) {
