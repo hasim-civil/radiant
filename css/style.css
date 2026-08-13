@@ -763,9 +763,7 @@ input[type='time']::-webkit-calendar-picker-indicator {
 .export-card,
 .stat-card,
 .summary-card,
-.feature-card,
-.auth-card,
-.hero-card {
+.auth-card {
     background: var(--surface);
     -webkit-backdrop-filter: var(--surface-blur);
     backdrop-filter: var(--surface-blur);
@@ -1815,13 +1813,12 @@ input[type='time']::-webkit-calendar-picker-indicator {
 .hero-pill-nav a.hero-pill-cta { background: #fff; color: var(--violet-700); }
 .hero-pill-nav a.hero-pill-cta:hover { background: var(--violet-100); color: var(--violet-700); }
 
-/* Narrow phones: logo text + "Features" are the first things to give up
-   width to Login/Sign Up, which are the two links that actually matter
-   when the whole nav has ~350px to work with. */
+/* Narrow phones: logo text is the first thing to give up width to
+   Login/Sign Up, which are the two links that actually matter when the
+   whole nav has ~350px to work with. */
 @media (max-width: 479px) {
     .hero-logo span { display: none; }
     .hero-logo { padding: var(--space-2); }
-    .hero-pill-nav a.hero-pill-link-features { display: none; }
 }
 
 .hero-photo-content {
@@ -1853,78 +1850,6 @@ input[type='time']::-webkit-calendar-picker-indicator {
 }
 
 .hero-buttons { display: flex; flex-wrap: wrap; gap: var(--space-3); }
-
-.hero-scroll-cue {
-    position: relative;
-    z-index: 2;
-    align-self: center;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: var(--space-2);
-    padding: var(--space-5) 0;
-    color: rgba(255, 255, 255, 0.75);
-    font-size: var(--text-2xs);
-    font-weight: var(--weight-semi);
-    letter-spacing: var(--tracking-wide);
-    text-transform: uppercase;
-    transition: color var(--dur-fast) var(--ease-standard);
-}
-.hero-scroll-cue:hover { color: #fff; }
-.hero-scroll-track {
-    width: 28px; height: 2px;
-    border-radius: var(--radius-full);
-    background: rgba(255, 255, 255, 0.25);
-    overflow: hidden;
-}
-.hero-scroll-thumb {
-    display: block;
-    width: 40%; height: 100%;
-    background: #fff;
-    animation: hero-scroll-cue 1.8s ease-in-out infinite;
-}
-@keyframes hero-scroll-cue {
-    0%, 100% { transform: translateX(-10%); }
-    50%      { transform: translateX(160%); }
-}
-
-.features { padding: var(--space-10) 0; }
-
-.features h2 {
-    font-size: var(--text-xl);
-    font-weight: var(--weight-black);
-    letter-spacing: var(--tracking-tight);
-    text-align: center;
-    margin-bottom: var(--space-8);
-}
-
-.features-grid { display: grid; gap: var(--space-4); }
-
-.feature-card {
-    padding: var(--space-5);
-    transition: transform var(--dur-normal) var(--ease-standard),
-                box-shadow var(--dur-normal) var(--ease-standard),
-                border-color var(--dur-normal) var(--ease-standard);
-}
-.feature-card:hover {
-    transform: translate3d(0, -4px, 0);
-    box-shadow: var(--shadow-md);
-    border-color: var(--brand-border);
-}
-
-.feature-icon {
-    display: grid;
-    place-items: center;
-    width: 46px; height: 46px;
-    margin-bottom: var(--space-4);
-    border-radius: var(--radius-md);
-    background: var(--brand-subtle);
-    color: var(--brand);
-    font-size: 1.15rem;
-}
-
-.feature-card h3 { font-size: var(--text-md); margin-bottom: var(--space-2); }
-.feature-card p { font-size: var(--text-sm); color: var(--text-secondary); line-height: var(--leading-body); }
 
 .landing-footer, .dashboard-footer {
     padding: var(--space-8) 0;
@@ -2018,7 +1943,6 @@ input[type='time']::-webkit-calendar-picker-indicator {
 
     .hero-photo { min-height: 640px; }
     .hero-photo-content h1 { font-size: var(--text-3xl); }
-    .features-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .landing-container { padding: 0 var(--space-8); }
 
     .auth-card { padding: var(--space-10) var(--space-8); }
@@ -2067,7 +1991,6 @@ input[type='time']::-webkit-calendar-picker-indicator {
 
     .stats-grid { grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); }
     .summary-cards { grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); }
-    .features-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 
     .action-body { grid-template-columns: auto minmax(0, 1fr) auto; }
     .attendance-status { grid-template-columns: repeat(3, minmax(0, 1fr)); margin-bottom: 0; }

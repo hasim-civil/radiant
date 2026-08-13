@@ -1,5 +1,5 @@
 /* ===========================================================================
-   Smart Attendance — UI layer
+   Orbit Time — UI layer
    ---------------------------------------------------------------------------
    Presentation only. This file never reads or writes Firebase, never changes
    attendance data, and never renames a DOM id. It observes what the existing

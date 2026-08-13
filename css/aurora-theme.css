@@ -219,8 +219,7 @@
    padding trick so it never adds to the box's footprint or nudges layout.
    Applied only to the cards that anchor each screen.
    --------------------------------------------------------------------------- */
-[data-theme='light'] .attendance-action-card,
-[data-theme='light'] .hero-card {
+[data-theme='light'] .attendance-action-card {
     background:
         linear-gradient(var(--surface), var(--surface)) padding-box,
         linear-gradient(135deg,
