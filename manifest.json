@@ -1,6 +1,6 @@
 {
-  "name": "Smart Attendance",
-  "short_name": "Smart Attendance",
+  "name": "Orbit Time",
+  "short_name": "Orbit Time",
   "description": "Check in, track your hours and manage leave from your phone.",
   "start_url": "./index.html",
   "display": "standalone",

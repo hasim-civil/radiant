@@ -1,8 +1,8 @@
-// Smart Attendance — Service Worker
+// Orbit Time — Service Worker
 // Bump this on every deploy that changes cached files, so old caches get cleared.
 const CACHE_VERSION = 'v10';
-const STATIC_CACHE = `smart-attendance-static-${CACHE_VERSION}`;
-const RUNTIME_CACHE = `smart-attendance-runtime-${CACHE_VERSION}`;
+const STATIC_CACHE = `orbit-time-static-${CACHE_VERSION}`;
+const RUNTIME_CACHE = `orbit-time-runtime-${CACHE_VERSION}`;
 
 // App shell: the actual pages, styles, scripts and images that make the app usable offline.
 const APP_SHELL = [
