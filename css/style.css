@@ -472,6 +472,19 @@
 .btn-sm { min-height: 34px; padding: var(--space-2) var(--space-3); font-size: var(--text-xs); border-radius: var(--radius-sm); gap: var(--space-1); }
 .btn-block { display: flex; width: 100%; }
 
+/* Pill CTAs — hero only. Full-round, high-contrast pair (near-black +
+   brand) that reads against a photo rather than a plain surface. */
+.btn-pill {
+    min-height: 50px;
+    padding: var(--space-3) var(--space-6);
+    border-radius: var(--radius-full);
+    font-size: var(--text-base);
+}
+.btn-pill-dark { background: #14121f; color: #fff; }
+.btn-pill-dark:hover:not(:disabled) { background: #000; }
+.btn-pill-brand { background: var(--brand); color: #fff; box-shadow: var(--shadow-brand); }
+.btn-pill-brand:hover:not(:disabled) { background: var(--violet-600); }
+
 /* Ripple — one span per press, removed by ui.js on animationend. */
 .ripple {
     position: absolute;
@@ -1697,78 +1710,182 @@ input[type='time']::-webkit-calendar-picker-indicator {
     padding: 0 var(--space-5);
 }
 
-.landing-header {
-    position: sticky;
-    top: 0;
-    z-index: var(--z-sticky);
+/* ---------------------------------------------------------------------------
+   Hero — a full-bleed photo inside a floating rounded frame. Nav is overlaid
+   on the image itself (logo pill top-left, links pill top-right) rather
+   than a separate bar, so it only exists where the photo does; sections
+   below rely on their own headings and the footer, not a persistent nav.
+   --------------------------------------------------------------------------- */
+.hero-frame {
+    position: relative;
+    padding: var(--space-5) 0 var(--space-8);
+}
+
+.hero-photo {
+    position: relative;
+    isolation: isolate;
+    min-height: 560px;
+    display: flex;
+    flex-direction: column;
+    border-radius: var(--radius-2xl);
+    overflow: hidden;
+    box-shadow: var(--shadow-xl);
+}
+
+/* Separate layer for the photo + its slow zoom, so the animation never
+   scales the rounded corners, nav, or text sitting on top of it. */
+.hero-photo-bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background-image: url('../images/hero-office-mobile.jpg');
+    background-size: cover;
+    background-position: center;
+    animation: hero-photo-breathe 24s ease-in-out infinite;
+}
+@media (min-width: 640px) {
+    .hero-photo-bg { background-image: url('../images/hero-office.jpg'); }
+}
+@keyframes hero-photo-breathe {
+    0%, 100% { transform: scale(1); }
+    50%      { transform: scale(1.045); }
+}
+
+.hero-photo-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: linear-gradient(180deg,
+        rgba(10, 8, 24, 0.55) 0%,
+        rgba(10, 8, 24, 0.22) 34%,
+        rgba(10, 8, 24, 0.32) 70%,
+        rgba(10, 8, 24, 0.68) 100%);
+}
+
+.hero-photo-nav {
+    position: relative;
+    z-index: 2;
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: var(--space-3);
-    padding: var(--space-4) 0;
-    padding-top: calc(var(--space-4) + env(safe-area-inset-top, 0px));
-    background: var(--nav-surface);
-    -webkit-backdrop-filter: var(--nav-blur);
-    backdrop-filter: var(--nav-blur);
-    margin-inline: calc(var(--space-5) * -1);
-    padding-inline: var(--space-5);
-    border-bottom: 1px solid var(--border-subtle);
+    padding: var(--space-5);
 }
 
-.hero {
-    display: grid;
-    gap: var(--space-8);
-    padding: var(--space-10) 0 var(--space-12);
+.hero-logo {
+    display: inline-flex;
     align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-4);
+    border-radius: var(--radius-full);
+    background: rgba(255, 255, 255, 0.14);
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
+    color: #fff;
+    font-weight: var(--weight-bold);
+    font-size: var(--text-sm);
+    white-space: nowrap;
+}
+.hero-logo i { color: var(--violet-300); }
+
+.hero-pill-nav {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+    padding: var(--space-1);
+    border-radius: var(--radius-full);
+    background: rgba(255, 255, 255, 0.14);
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
+}
+.hero-pill-nav a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 34px;
+    padding: 0 var(--space-4);
+    border-radius: var(--radius-full);
+    font-size: var(--text-sm);
+    font-weight: var(--weight-semi);
+    color: rgba(255, 255, 255, 0.88);
+    white-space: nowrap;
+    transition: background var(--dur-fast) var(--ease-standard),
+                color var(--dur-fast) var(--ease-standard);
+}
+.hero-pill-nav a:hover { background: rgba(255, 255, 255, 0.16); color: #fff; }
+.hero-pill-nav a.hero-pill-cta { background: #fff; color: var(--violet-700); }
+.hero-pill-nav a.hero-pill-cta:hover { background: var(--violet-100); color: var(--violet-700); }
+
+/* Narrow phones: logo text + "Features" are the first things to give up
+   width to Login/Sign Up, which are the two links that actually matter
+   when the whole nav has ~350px to work with. */
+@media (max-width: 479px) {
+    .hero-logo span { display: none; }
+    .hero-logo { padding: var(--space-2); }
+    .hero-pill-nav a.hero-pill-link-features { display: none; }
 }
 
-.hero-content h1 {
+.hero-photo-content {
+    position: relative;
+    z-index: 2;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: var(--space-6) var(--space-5) 0;
+    max-width: 620px;
+}
+
+.hero-photo-content h1 {
+    color: #fff;
     font-size: var(--text-2xl);
     font-weight: var(--weight-black);
     letter-spacing: var(--tracking-tight);
     line-height: var(--leading-tight);
-    margin-bottom: var(--space-4);
     text-wrap: balance;
+    margin-bottom: var(--space-4);
 }
 
-.hero-content p {
+.hero-photo-content p {
+    color: rgba(255, 255, 255, 0.82);
     font-size: var(--text-base);
-    color: var(--text-secondary);
-    max-width: 52ch;
+    max-width: 46ch;
     margin-bottom: var(--space-6);
 }
 
 .hero-buttons { display: flex; flex-wrap: wrap; gap: var(--space-3); }
 
-.hero-card { padding: var(--space-5); box-shadow: var(--shadow-lg); }
-
-.hero-card .card-header {
-    padding: 0 0 var(--space-4);
-    border-bottom: 1px solid var(--border-subtle);
-    margin-bottom: var(--space-4);
-    font-weight: var(--weight-semi);
-    font-size: var(--text-sm);
-}
-.hero-card .card-header i { color: var(--brand-text); }
-
-.card-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-3); }
-
-.stat { display: flex; flex-direction: column; align-items: center; gap: var(--space-1); }
-
-.stat-number {
-    font-family: var(--font-data);
-    font-variant-numeric: tabular-nums;
-    font-size: var(--text-xl);
-    font-weight: var(--weight-bold);
-    line-height: 1;
-    color: var(--brand-text);
-}
-
-.stat-label {
+.hero-scroll-cue {
+    position: relative;
+    z-index: 2;
+    align-self: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-5) 0;
+    color: rgba(255, 255, 255, 0.75);
     font-size: var(--text-2xs);
-    color: var(--text-muted);
+    font-weight: var(--weight-semi);
     letter-spacing: var(--tracking-wide);
     text-transform: uppercase;
+    transition: color var(--dur-fast) var(--ease-standard);
+}
+.hero-scroll-cue:hover { color: #fff; }
+.hero-scroll-track {
+    width: 28px; height: 2px;
+    border-radius: var(--radius-full);
+    background: rgba(255, 255, 255, 0.25);
+    overflow: hidden;
+}
+.hero-scroll-thumb {
+    display: block;
+    width: 40%; height: 100%;
+    background: #fff;
+    animation: hero-scroll-cue 1.8s ease-in-out infinite;
+}
+@keyframes hero-scroll-cue {
+    0%, 100% { transform: translateX(-10%); }
+    50%      { transform: translateX(160%); }
 }
 
 .features { padding: var(--space-10) 0; }
@@ -1899,10 +2016,10 @@ input[type='time']::-webkit-calendar-picker-indicator {
     .attendance-status { grid-template-columns: repeat(2, minmax(0, 1fr)); margin-bottom: var(--space-4); }
     .action-buttons { grid-column: 1 / -1; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
 
-    .hero { grid-template-columns: 1.05fr 0.95fr; padding: var(--space-16) 0; }
+    .hero-photo { min-height: 640px; }
+    .hero-photo-content h1 { font-size: var(--text-3xl); }
     .features-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .landing-container { padding: 0 var(--space-8); }
-    .landing-header { margin-inline: calc(var(--space-8) * -1); padding-inline: var(--space-8); }
 
     .auth-card { padding: var(--space-10) var(--space-8); }
 }
