@@ -23,13 +23,14 @@
     <link rel="icon" type="image/png" sizes="192x192" href="images/icon-192.png">
     <link rel="icon" type="image/png" sizes="512x512" href="images/icon-512.png">
     <link rel="apple-touch-icon" href="images/icon-192.png">
-    <meta name="theme-color" content="#8b5cf6">
+    <meta name="theme-color" content="#07050f">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap">
     <link rel="stylesheet" href="css/design-system.css">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/aurora-theme.css">
+    <link rel="stylesheet" href="css/landing.css">
     <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" onload="this.rel='stylesheet'">
     <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
     <script>
@@ -57,30 +58,319 @@
 
     <!-- Landing Page -->
     <div class="landing-container">
-        <!-- Hero Section — nav lives inside the photo overlay, not a
-             separate bar, so it never needs to persist below the fold. -->
-        <div class="hero-frame">
-            <div class="hero-frame-glow" aria-hidden="true"></div>
-            <section class="hero-photo">
-                <div class="hero-photo-bg"></div>
-                <div class="hero-photo-overlay"></div>
+        <header class="ld-nav">
+            <div class="ld-nav-inner">
+                <a href="index.html" class="ld-nav-logo">
+                    <img src="images/orbit-time-logo-white.png" alt="Orbit Time">
+                </a>
+                <nav class="ld-nav-links">
+                    <a href="#attendance">Features</a>
+                    <a href="#attendance">Attendance</a>
+                    <a href="#leave">Leave</a>
+                    <a href="#analytics">Analytics</a>
+                </nav>
+                <div class="ld-nav-actions">
+                    <a href="login.html" class="ld-nav-login">Login</a>
+                    <a href="register.html" class="btn btn-pill btn-pill-light">Sign Up</a>
+                </div>
+                <button class="ld-nav-toggle" id="ldNavToggle" aria-label="Open menu" aria-expanded="false">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+            <nav class="ld-nav-mobile" id="ldNavMobile">
+                <a href="#attendance">Features</a>
+                <a href="#attendance">Attendance</a>
+                <a href="#leave">Leave</a>
+                <a href="#analytics">Analytics</a>
+                <a href="login.html">Login</a>
+                <a href="register.html" class="btn btn-pill btn-pill-light">Sign Up</a>
+            </nav>
+        </header>
 
-                <div class="hero-photo-nav">
-                    <a href="index.html" class="hero-logo">
-                        <img src="images/orbit-time-logo-white.png" alt="Orbit Time">
+        <!-- Hero -->
+        <section class="ld-hero">
+            <div class="ld-hero-glow" aria-hidden="true"></div>
+            <div class="ld-hero-inner">
+                <div class="ld-hero-copy">
+                    <h1 class="reveal">Attendance your team actually keeps up with.</h1>
+                    <p class="reveal">Check in, track hours, manage leave, and see who's working — all from one simple workspace.</p>
+                    <div class="ld-actions reveal">
+                        <a href="register.html" class="btn btn-pill btn-pill-light">
+                            <i class="fas fa-rocket"></i> Start for Free
+                        </a>
+                        <a href="login.html" class="btn btn-pill btn-pill-outline">Sign In</a>
+                    </div>
+                </div>
+
+                <div class="ld-hero-devices reveal" aria-hidden="true">
+                    <div class="device-phone device-phone--primary">
+                        <div class="device-phone__frame">
+                            <div class="device-phone__notch"></div>
+                            <div class="device-phone__screen">
+                                <div class="phone-app">
+                                    <div class="phone-statusbar">
+                                        <span>9:41</span>
+                                        <div class="phone-statusbar__icons"><i class="fas fa-signal"></i><i class="fas fa-wifi"></i><i class="fas fa-battery-three-quarters"></i></div>
+                                    </div>
+                                    <div class="phone-topbar">
+                                        <div class="phone-brand"><img src="images/orbit-time-icon-purple.png" alt=""><span>Orbit Time</span></div>
+                                        <i class="fas fa-bell"></i>
+                                    </div>
+                                    <div class="phone-greeting">Today's Attendance</div>
+                                    <div class="phone-status-pill phone-status-pill--in"><i class="fas fa-circle"></i> Checked In</div>
+                                    <div class="phone-metric-row">
+                                        <div class="phone-metric"><span class="phone-metric__label">Check-in</span><span class="phone-metric__value">09:02 AM</span></div>
+                                        <div class="phone-metric"><span class="phone-metric__label">Working</span><span class="phone-metric__value">5h 48m</span></div>
+                                    </div>
+                                    <div class="phone-ring-row">
+                                        <div class="phone-ring" style="--pct:82"><span>82%</span></div>
+                                        <div class="phone-ring-info">
+                                            <span class="phone-ring-info__label">Attendance</span>
+                                            <span class="phone-ring-info__value">This month</span>
+                                        </div>
+                                    </div>
+                                    <div class="phone-section-label">Recent Activity</div>
+                                    <div class="phone-activity-row"><i class="fas fa-sign-in-alt"></i><span>Checked in</span><span class="phone-activity-time">9:02 AM</span></div>
+                                    <div class="phone-activity-row"><i class="fas fa-mug-hot"></i><span>Break started</span><span class="phone-activity-time">1:00 PM</span></div>
+                                    <div class="phone-chart">
+                                        <div class="phone-chart__bar" style="--h:40%"></div>
+                                        <div class="phone-chart__bar" style="--h:65%"></div>
+                                        <div class="phone-chart__bar" style="--h:52%"></div>
+                                        <div class="phone-chart__bar" style="--h:78%"></div>
+                                        <div class="phone-chart__bar" style="--h:60%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="device-phone device-phone--secondary">
+                        <div class="device-phone__frame">
+                            <div class="device-phone__notch"></div>
+                            <div class="device-phone__screen">
+                                <div class="phone-app">
+                                    <div class="phone-statusbar">
+                                        <span>9:41</span>
+                                        <div class="phone-statusbar__icons"><i class="fas fa-signal"></i><i class="fas fa-wifi"></i><i class="fas fa-battery-three-quarters"></i></div>
+                                    </div>
+                                    <div class="phone-topbar">
+                                        <div class="phone-brand"><img src="images/orbit-time-icon-purple.png" alt=""><span>Orbit Time</span></div>
+                                        <i class="fas fa-bell"></i>
+                                    </div>
+                                    <div class="phone-section-label">Weekly Attendance</div>
+                                    <div class="phone-chart phone-chart--dual">
+                                        <div class="phone-chart__col"><div class="phone-chart__bar" style="--h:78%"></div></div>
+                                        <div class="phone-chart__col"><div class="phone-chart__bar" style="--h:64%"></div></div>
+                                        <div class="phone-chart__col"><div class="phone-chart__bar" style="--h:90%"></div></div>
+                                        <div class="phone-chart__col"><div class="phone-chart__bar" style="--h:70%"></div></div>
+                                        <div class="phone-chart__col"><div class="phone-chart__bar" style="--h:82%"></div></div>
+                                        <div class="phone-chart__col"><div class="phone-chart__bar phone-chart__bar--accent" style="--h:30%"></div></div>
+                                        <div class="phone-chart__col"><div class="phone-chart__bar phone-chart__bar--accent" style="--h:20%"></div></div>
+                                    </div>
+                                    <div class="phone-metric-row">
+                                        <div class="phone-metric"><span class="phone-metric__label">Present</span><span class="phone-metric__value">21</span></div>
+                                        <div class="phone-metric"><span class="phone-metric__label">Absent</span><span class="phone-metric__value">2</span></div>
+                                    </div>
+                                    <div class="phone-section-label">Leave Balance</div>
+                                    <div class="phone-leave-card">
+                                        <div class="phone-leave-card__row"><span>Paid Leave</span><strong>8 days</strong></div>
+                                        <div class="phone-leave-bar"><span style="width:62%"></span></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2 — Smart Attendance -->
+        <section class="ld-section" id="attendance">
+            <div class="ld-section-inner">
+                <div class="ld-section-copy reveal">
+                    <span class="ld-eyebrow">Smart Attendance</span>
+                    <h2>Attendance, without the spreadsheets.</h2>
+                    <p>One tap to check in. Orbit Time handles the rest — time tracking, status, and a live view of who's working right now.</p>
+                </div>
+                <div class="showcase-card reveal" aria-hidden="true">
+                    <div class="showcase-card__header">
+                        <span class="showcase-card__title"><i class="fas fa-fingerprint"></i> Today's Attendance</span>
+                        <span class="showcase-card__date">Wed, Aug 13</span>
+                    </div>
+                    <div class="showcase-card__body">
+                        <div class="showcase-ring-block">
+                            <div class="phone-ring phone-ring--lg" style="--pct:78"><span>5h 48m</span><small>On the clock</small></div>
+                        </div>
+                        <div class="showcase-stat-grid">
+                            <div class="showcase-stat"><span class="showcase-stat__label">Check In</span><span class="showcase-stat__value">09:02 AM</span></div>
+                            <div class="showcase-stat"><span class="showcase-stat__label">Check Out</span><span class="showcase-stat__value">--:--</span></div>
+                            <div class="showcase-stat"><span class="showcase-stat__label">Status</span><span class="showcase-stat__value showcase-stat__value--good">On Time</span></div>
+                            <div class="showcase-stat"><span class="showcase-stat__label">Location</span><span class="showcase-stat__value">Office</span></div>
+                        </div>
+                    </div>
+                    <div class="showcase-card__footer">
+                        <div class="showcase-activity-row"><i class="fas fa-sign-in-alt"></i> Priya checked in <span>2m ago</span></div>
+                        <div class="showcase-activity-row"><i class="fas fa-sign-in-alt"></i> Rakesh checked in <span>14m ago</span></div>
+                        <div class="showcase-activity-row"><i class="fas fa-sign-out-alt"></i> Ananya checked out <span>28m ago</span></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3 — Working Hours -->
+        <section class="ld-section ld-section--reverse" id="hours">
+            <div class="ld-section-inner">
+                <div class="showcase-card reveal" aria-hidden="true">
+                    <div class="showcase-card__header">
+                        <span class="showcase-card__title"><i class="fas fa-hourglass-half"></i> Working Hours</span>
+                        <span class="showcase-card__date">This week</span>
+                    </div>
+                    <div class="showcase-card__body">
+                        <div class="showcase-stat-grid showcase-stat-grid--4">
+                            <div class="showcase-stat"><span class="showcase-stat__label">Total Hours</span><span class="showcase-stat__value">38.5h</span></div>
+                            <div class="showcase-stat"><span class="showcase-stat__label">Break</span><span class="showcase-stat__value">3.2h</span></div>
+                            <div class="showcase-stat"><span class="showcase-stat__label">Overtime</span><span class="showcase-stat__value showcase-stat__value--good">4.5h</span></div>
+                            <div class="showcase-stat"><span class="showcase-stat__label">Avg/Day</span><span class="showcase-stat__value">7.7h</span></div>
+                        </div>
+                        <div class="showcase-timeline">
+                            <div class="showcase-timeline__row"><span>Mon</span><div class="showcase-timeline__track"><span style="width:82%"></span></div><span>8.2h</span></div>
+                            <div class="showcase-timeline__row"><span>Tue</span><div class="showcase-timeline__track"><span style="width:70%"></span></div><span>7.0h</span></div>
+                            <div class="showcase-timeline__row"><span>Wed</span><div class="showcase-timeline__track"><span style="width:90%"></span></div><span>9.0h</span></div>
+                            <div class="showcase-timeline__row"><span>Thu</span><div class="showcase-timeline__track"><span style="width:65%"></span></div><span>6.5h</span></div>
+                            <div class="showcase-timeline__row"><span>Fri</span><div class="showcase-timeline__track"><span style="width:75%"></span></div><span>7.5h</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="ld-section-copy reveal">
+                    <span class="ld-eyebrow">Working Hours</span>
+                    <h2>Every hour, accounted for.</h2>
+                    <p>Automatic overtime detection, break tracking, and a daily timeline your payroll team will actually thank you for.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4 — Leave Management -->
+        <section class="ld-section" id="leave">
+            <div class="ld-section-inner">
+                <div class="ld-section-copy reveal">
+                    <span class="ld-eyebrow">Leave Management</span>
+                    <h2>Leave requests, without the back-and-forth.</h2>
+                    <p>Employees request, managers approve — with a live calendar and balance so nobody's guessing.</p>
+                </div>
+                <div class="ld-devices-single reveal" aria-hidden="true">
+                    <div class="device-phone device-phone--solo">
+                        <div class="device-phone__frame">
+                            <div class="device-phone__notch"></div>
+                            <div class="device-phone__screen">
+                                <div class="phone-app">
+                                    <div class="phone-statusbar">
+                                        <span>9:41</span>
+                                        <div class="phone-statusbar__icons"><i class="fas fa-signal"></i><i class="fas fa-wifi"></i><i class="fas fa-battery-three-quarters"></i></div>
+                                    </div>
+                                    <div class="phone-topbar">
+                                        <div class="phone-brand"><img src="images/orbit-time-icon-purple.png" alt=""><span>Orbit Time</span></div>
+                                        <i class="fas fa-bell"></i>
+                                    </div>
+                                    <div class="phone-section-label">Leave Balance</div>
+                                    <div class="phone-leave-card">
+                                        <div class="phone-leave-card__row"><span>Paid Leave</span><strong>8 / 12 days</strong></div>
+                                        <div class="phone-leave-bar"><span style="width:66%"></span></div>
+                                    </div>
+                                    <div class="phone-section-label">August</div>
+                                    <div class="phone-calendar">
+                                        <span></span><span></span><span class="is-approved"></span><span class="is-approved"></span><span></span><span></span><span></span>
+                                        <span></span><span></span><span></span><span class="is-today"></span><span class="is-pending"></span><span></span><span></span>
+                                    </div>
+                                    <div class="phone-section-label">Requests</div>
+                                    <div class="phone-request-row"><span>Aug 18 – Aug 19</span><span class="phone-badge phone-badge--pending">Pending</span></div>
+                                    <div class="phone-request-row"><span>Jul 04</span><span class="phone-badge phone-badge--approved">Approved</span></div>
+                                    <div class="phone-request-row"><span>Jun 21</span><span class="phone-badge phone-badge--approved">Approved</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 5 — Analytics -->
+        <section class="ld-section" id="analytics">
+            <div class="ld-section-inner ld-section-inner--center">
+                <div class="ld-section-copy reveal">
+                    <span class="ld-eyebrow">Analytics</span>
+                    <h2>See the whole team at a glance.</h2>
+                    <p>Attendance rate, punctuality, and hours — rolled up into the numbers that actually matter.</p>
+                </div>
+                <div class="showcase-card showcase-card--wide reveal" aria-hidden="true">
+                    <div class="showcase-card__body">
+                        <div class="showcase-stat-grid showcase-stat-grid--4">
+                            <div class="showcase-stat"><span class="showcase-stat__label">Attendance</span><span class="showcase-stat__value">96.4%</span></div>
+                            <div class="showcase-stat"><span class="showcase-stat__label">Present</span><span class="showcase-stat__value showcase-stat__value--good">142</span></div>
+                            <div class="showcase-stat"><span class="showcase-stat__label">Absent</span><span class="showcase-stat__value showcase-stat__value--bad">6</span></div>
+                            <div class="showcase-stat"><span class="showcase-stat__label">Late</span><span class="showcase-stat__value showcase-stat__value--warn">9</span></div>
+                        </div>
+                        <div class="showcase-bigchart">
+                            <div class="showcase-bigchart__bar" style="--h:55%"><span>Mon</span></div>
+                            <div class="showcase-bigchart__bar" style="--h:72%"><span>Tue</span></div>
+                            <div class="showcase-bigchart__bar" style="--h:64%"><span>Wed</span></div>
+                            <div class="showcase-bigchart__bar" style="--h:88%"><span>Thu</span></div>
+                            <div class="showcase-bigchart__bar" style="--h:70%"><span>Fri</span></div>
+                            <div class="showcase-bigchart__bar" style="--h:34%"><span>Sat</span></div>
+                            <div class="showcase-bigchart__bar" style="--h:20%"><span>Sun</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Final CTA -->
+        <section class="ld-cta">
+            <div class="ld-cta-glow" aria-hidden="true"></div>
+            <div class="ld-cta-inner reveal">
+                <h2>Make attendance effortless.</h2>
+                <p>One simple workspace for your team's attendance, working hours and leave.</p>
+                <div class="ld-actions">
+                    <a href="register.html" class="btn btn-pill btn-pill-light">
+                        <i class="fas fa-rocket"></i> Start for Free
                     </a>
-                    <nav class="hero-pill-nav">
-                        <a href="login.html">Login</a>
-                        <a href="register.html" class="hero-pill-cta">Sign Up</a>
-                    </nav>
+                    <a href="login.html" class="btn btn-pill btn-pill-outline">Sign In</a>
                 </div>
-
-                <div class="hero-photo-content">
-                    <h1>Attendance your team actually keeps up with</h1>
-                    <p>Check in, track hours, and see who's working — live, from any device, without a single spreadsheet.</p>
+                <div class="ld-cta-device" aria-hidden="true">
+                    <div class="device-phone device-phone--cta">
+                        <div class="device-phone__frame">
+                            <div class="device-phone__notch"></div>
+                            <div class="device-phone__screen">
+                                <div class="phone-app">
+                                    <div class="phone-statusbar">
+                                        <span>9:41</span>
+                                        <div class="phone-statusbar__icons"><i class="fas fa-signal"></i><i class="fas fa-wifi"></i><i class="fas fa-battery-three-quarters"></i></div>
+                                    </div>
+                                    <div class="phone-topbar">
+                                        <div class="phone-brand"><img src="images/orbit-time-icon-purple.png" alt=""><span>Orbit Time</span></div>
+                                        <i class="fas fa-bell"></i>
+                                    </div>
+                                    <div class="phone-status-pill phone-status-pill--in"><i class="fas fa-circle"></i> Checked In</div>
+                                    <div class="phone-ring-row">
+                                        <div class="phone-ring" style="--pct:82"><span>82%</span></div>
+                                        <div class="phone-ring-info">
+                                            <span class="phone-ring-info__label">Attendance</span>
+                                            <span class="phone-ring-info__value">This month</span>
+                                        </div>
+                                    </div>
+                                    <div class="phone-chart">
+                                        <div class="phone-chart__bar" style="--h:40%"></div>
+                                        <div class="phone-chart__bar" style="--h:65%"></div>
+                                        <div class="phone-chart__bar" style="--h:52%"></div>
+                                        <div class="phone-chart__bar" style="--h:78%"></div>
+                                        <div class="phone-chart__bar" style="--h:60%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </section>
-        </div>
+            </div>
+        </section>
 
         <!-- Footer -->
         <footer class="landing-footer">

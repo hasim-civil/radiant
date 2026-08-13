@@ -472,10 +472,6 @@
     border-radius: var(--radius-full);
     font-size: var(--text-base);
 }
-.btn-pill-dark { background: #14121f; color: #fff; }
-.btn-pill-dark:hover:not(:disabled) { background: #000; }
-.btn-pill-brand { background: var(--brand); color: #fff; box-shadow: var(--shadow-brand); }
-.btn-pill-brand:hover:not(:disabled) { background: var(--violet-600); }
 
 /* Ripple — one span per press, removed by ui.js on animationend. */
 .ripple {
@@ -1700,163 +1696,6 @@ input[type='time']::-webkit-calendar-picker-indicator {
     padding: 0 var(--space-5);
 }
 
-/* ---------------------------------------------------------------------------
-   Hero — a full-bleed photo inside a floating rounded frame. Nav is overlaid
-   on the image itself (logo pill top-left, links pill top-right) rather
-   than a separate bar, so it only exists where the photo does; sections
-   below rely on their own headings and the footer, not a persistent nav.
-   --------------------------------------------------------------------------- */
-.hero-frame {
-    position: relative;
-    /* Break out of .landing-container's own side padding on mobile so the
-       hero can sit a flat 16px from the true viewport edge, per spec,
-       rather than inheriting an extra inset on top of its own margin. */
-    margin-inline: calc(var(--space-5) * -1);
-}
-
-.hero-photo {
-    position: relative;
-    isolation: isolate;
-    width: calc(100% - 32px);
-    margin: 16px;
-    /* Nearly fills the viewport on mobile — svh (not vh) so mobile browser
-       chrome (address bar etc.) doesn't leave a tall card that then jumps
-       once the chrome collapses. Never a short fixed-height card. */
-    min-height: calc(100svh - 32px);
-    display: flex;
-    flex-direction: column;
-    border-radius: var(--radius-2xl);
-    overflow: hidden;
-    box-shadow: var(--shadow-xl);
-}
-
-/* Separate layer for the photo + its slow zoom, so the animation never
-   scales the rounded corners, nav, or text sitting on top of it. */
-.hero-photo-bg {
-    position: absolute;
-    inset: 0;
-    z-index: 0;
-    background-image: url('../images/hero-office-mobile.jpg');
-    background-size: cover;
-    /* The laptop sits right-of-center in the source photo. On a tall
-       mobile card (portrait) a centered cover crop pushes it half out of
-       frame, so bias the crop toward it; a wide desktop card has enough
-       horizontal room to just center the whole scene. */
-    background-position: 72% center;
-    animation: hero-photo-breathe 24s ease-in-out infinite;
-}
-@media (min-width: 640px) {
-    .hero-photo-bg {
-        background-image: url('../images/hero-office.jpg');
-        background-position: center;
-    }
-}
-@keyframes hero-photo-breathe {
-    0%, 100% { transform: scale(1); }
-    50%      { transform: scale(1.045); }
-}
-
-.hero-photo-overlay {
-    position: absolute;
-    inset: 0;
-    z-index: 1;
-    /* Stays light through the middle so the laptop/mockup reads clearly,
-       then ramps up hard from ~60% down — that's where the text now sits
-       (.hero-photo-content is bottom-anchored), so it needs real contrast
-       regardless of what's behind it in the photo at that point. */
-    background: linear-gradient(180deg,
-        rgba(10, 8, 24, 0.55) 0%,
-        rgba(10, 8, 24, 0.20) 30%,
-        rgba(10, 8, 24, 0.26) 55%,
-        rgba(10, 8, 24, 0.62) 75%,
-        rgba(10, 8, 24, 0.88) 100%);
-}
-
-.hero-photo-nav {
-    position: relative;
-    z-index: 2;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--space-3);
-    padding: var(--space-5);
-}
-
-.hero-logo { display: inline-flex; align-items: center; flex-shrink: 0; }
-.hero-logo img {
-    display: block;
-    height: 30px;
-    width: auto;
-    filter: drop-shadow(0 2px 10px rgba(0, 0, 0, 0.35));
-}
-
-.hero-pill-nav {
-    display: flex;
-    align-items: center;
-    gap: var(--space-1);
-    padding: var(--space-1);
-    border-radius: var(--radius-full);
-    background: rgba(255, 255, 255, 0.14);
-    -webkit-backdrop-filter: blur(14px);
-    backdrop-filter: blur(14px);
-}
-.hero-pill-nav a {
-    display: inline-flex;
-    align-items: center;
-    min-height: 34px;
-    padding: 0 var(--space-4);
-    border-radius: var(--radius-full);
-    font-size: var(--text-sm);
-    font-weight: var(--weight-semi);
-    color: rgba(255, 255, 255, 0.88);
-    white-space: nowrap;
-    transition: background var(--dur-fast) var(--ease-standard),
-                color var(--dur-fast) var(--ease-standard);
-}
-.hero-pill-nav a:hover { background: rgba(255, 255, 255, 0.16); color: #fff; }
-.hero-pill-nav a.hero-pill-cta { background: #fff; color: var(--violet-700); }
-.hero-pill-nav a.hero-pill-cta:hover { background: var(--violet-100); color: var(--violet-700); }
-
-/* Narrow phones: the wordmark is the first thing to give up width to
-   Login/Sign Up, which are the two links that actually matter when the
-   whole nav has ~350px to work with. */
-@media (max-width: 479px) {
-    .hero-logo img { height: 24px; }
-}
-
-.hero-photo-content {
-    position: relative;
-    z-index: 2;
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    /* Lower-middle, not dead-center: keeps the text off the brightest part
-       of the photo (the laptop screen sits mid-frame) and lands it in the
-       zone the overlay above darkens hardest. */
-    justify-content: flex-end;
-    padding: var(--space-6) var(--space-5) var(--space-8);
-    max-width: 620px;
-}
-
-.hero-photo-content h1 {
-    color: #fff;
-    font-size: var(--text-2xl);
-    font-weight: var(--weight-black);
-    letter-spacing: var(--tracking-tight);
-    line-height: var(--leading-tight);
-    text-wrap: balance;
-    margin-bottom: var(--space-4);
-}
-
-.hero-photo-content p {
-    color: rgba(255, 255, 255, 0.82);
-    font-size: var(--text-base);
-    max-width: 46ch;
-    margin-bottom: var(--space-6);
-}
-
-.hero-buttons { display: flex; flex-wrap: wrap; gap: var(--space-3); }
-
 .landing-footer, .dashboard-footer {
     padding: var(--space-8) 0;
     text-align: center;
@@ -1947,12 +1786,6 @@ input[type='time']::-webkit-calendar-picker-indicator {
     .attendance-status { grid-template-columns: repeat(2, minmax(0, 1fr)); margin-bottom: var(--space-4); }
     .action-buttons { grid-column: 1 / -1; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
 
-    /* Tablet/desktop: back to a floating card inset within the page
-       (not edge-to-edge like mobile), sized as a cinematic viewport-
-       relative hero rather than the mobile near-fullscreen treatment. */
-    .hero-frame { margin-inline: 0; padding: var(--space-5) 0 var(--space-8); }
-    .hero-photo { width: auto; margin: 0; min-height: 90vh; }
-    .hero-photo-content h1 { font-size: var(--text-3xl); }
     .landing-container { padding: 0 var(--space-8); }
 
     .auth-card { padding: var(--space-10) var(--space-8); }
