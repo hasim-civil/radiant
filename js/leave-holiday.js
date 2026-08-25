@@ -279,10 +279,10 @@ function getWorkLocationMeta(location) {
 
 /**
  * Resolve what should be displayed for a single date, following the priority:
- * Paid Leave > Holiday > Attendance Record > Week Off > Absent.
- * (An actual check-in on an otherwise-week-off day, e.g. working a Sunday,
- * always shows the real attendance data instead of being hidden behind
- * the automatic Week Off label.)
+ * Paid Leave > Attendance Record > Holiday > Week Off > Absent.
+ * (An actual check-in on an otherwise-holiday or week-off day, e.g. working
+ * a declared holiday or a Sunday, always shows the real attendance data
+ * instead of being hidden behind the automatic Holiday/Week Off label.)
  *
  * @param {Object} params
  * @param {string} params.dateStr - YYYY-MM-DD
@@ -298,7 +298,7 @@ function resolveDayStatus({ dateStr, attendanceData, holiday, paidLeave, isFutur
     if (paidLeave) {
         return { status: 'paid-leave', statusLabel: 'Paid Leave', statusClass: 'paid-leave', ...NA };
     }
-    if (holiday) {
+    if (holiday && !attendanceData) {
         return { status: 'holiday', statusLabel: 'Holiday', statusClass: 'holiday', ...NA };
     }
     if (isWeekOff(dateStr) && !attendanceData) {
